@@ -3,7 +3,6 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { healthApi } from "@/services/api";
-import { onOfflineChange } from "@/lib/api";
 import { remindersApi } from "@/services/api";
 
 export function useOffline() {
@@ -34,11 +33,6 @@ export function useOffline() {
         };
         startPolling();
 
-        // Listen for API-triggered offline events
-        const unsub = onOfflineChange((offline) => {
-            setIsOnline(!offline);
-        });
-
         // Browser online/offline events
         const goOnline = () => { setIsOnline(true); checkHealth(); };
         const goOffline = () => setIsOnline(false);
@@ -47,7 +41,6 @@ export function useOffline() {
 
         return () => {
             if (intervalRef.current) clearInterval(intervalRef.current);
-            unsub();
             window.removeEventListener("online", goOnline);
             window.removeEventListener("offline", goOffline);
         };

@@ -14,7 +14,7 @@ import { useAuth } from "../../hooks";
 export const Sidebar: React.FC = () => {
     const pathname = usePathname();
     const { logout, isAuthenticated } = useAuth();
-    const hideOn = ["/", "/onboarding", "/login", "/signup", "/verify-phone", "/verify-email", "/confirm-email"];
+    const hideOn = ["/", "/onboarding", "/login", "/signup", "/auth", "/verify-phone", "/verify-email", "/confirm-email"];
     if (hideOn.includes(pathname)) return null;
 
     const links = [

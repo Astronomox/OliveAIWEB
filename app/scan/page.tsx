@@ -347,7 +347,7 @@ export default function ScanPage() {
                                         Save to My Medications
                                     </button>
                                 ) : (
-                                    <Link href="/login" className="btn-primary w-full py-4 rounded-2xl flex items-center justify-center gap-2">
+                                    <Link href="/auth?mode=login" className="btn-primary w-full py-4 rounded-2xl flex items-center justify-center gap-2">
                                         Login to Save Medication
                                     </Link>
                                 )}

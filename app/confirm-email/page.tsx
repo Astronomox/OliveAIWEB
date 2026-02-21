@@ -106,7 +106,7 @@ function ConfirmEmailInner() {
                         </p>
                         <p className="text-xs text-muted-foreground">Redirecting to login in 3 seconds...</p>
 
-                        <Link href="/login" className="btn-primary rounded-2xl inline-flex items-center gap-2 px-8 py-3">
+                        <Link href="/auth?mode=login" className="btn-primary rounded-2xl inline-flex items-center gap-2 px-8 py-3">
                             Go to Login <ArrowRight className="w-4 h-4" />
                         </Link>
                     </motion.div>
@@ -127,7 +127,7 @@ function ConfirmEmailInner() {
                                 className="btn-primary rounded-2xl w-full py-3 flex items-center justify-center gap-2">
                                 <Mail className="w-5 h-5" /> Request a New Verification Email
                             </Link>
-                            <Link href="/login"
+                            <Link href="/auth?mode=login"
                                 className="block text-sm font-bold text-primary-600 hover:underline">
                                 Back to Login
                             </Link>

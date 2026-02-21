@@ -88,7 +88,7 @@ const config: Config = {
                 "muted-foreground": "#9CA3AF",
             },
             fontFamily: {
-                heading: ["var(--font-outfit)", "system-ui", "sans-serif"],
+                heading: ["var(--font-jakarta)", "system-ui", "sans-serif"],
                 body: ["var(--font-inter)", "system-ui", "sans-serif"],
             },
             fontSize: {

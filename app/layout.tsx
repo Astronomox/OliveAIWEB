@@ -1,6 +1,6 @@
 // app/layout.tsx — Root layout for the Olive AI web app
 import type { Metadata, Viewport } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Sidebar } from "@/components/layout/Sidebar";
@@ -9,16 +9,16 @@ import { cn } from "@/lib/utils";
 import { BackendWakeup } from "@/components/layout/BackendWakeup";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" });
 
 export const metadata: Metadata = {
-    title: "Safely-Mama AI | Medi-Sync Health Partner",
+    title: "Olive AI | Medi-Sync Health Partner",
     description: "AI-powered medication safety, prescription scanning, and maternal wellness companion for Nigerian mothers.",
     manifest: "/manifest.json",
     appleWebApp: {
         capable: true,
         statusBarStyle: "default",
-        title: "Safely-Mama",
+        title: "Olive AI",
     },
 };
 
@@ -36,8 +36,8 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" className={cn(inter.variable, outfit.variable)}>
-            <body className="flex flex-col min-h-screen bg-cream selection:bg-primary-100 selection:text-primary-900">
+        <html lang="en" className={cn(inter.variable, jakarta.variable)}>
+            <body className="flex flex-col min-h-screen bg-cream text-charcoal selection:bg-primary-100 selection:text-primary-900 font-body">
                 <BackendWakeup />
                 <Navbar />
 

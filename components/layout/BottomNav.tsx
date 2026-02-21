@@ -9,7 +9,7 @@ import { cn } from "../../lib/utils";
 
 export const BottomNav: React.FC = () => {
     const pathname = usePathname();
-    const hideOn = ["/", "/onboarding", "/login", "/signup", "/verify-phone", "/verify-email", "/confirm-email"];
+    const hideOn = ["/", "/onboarding", "/login", "/signup", "/auth", "/verify-phone", "/verify-email", "/confirm-email"];
     if (hideOn.includes(pathname)) return null;
 
     const links = [
