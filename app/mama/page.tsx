@@ -81,9 +81,18 @@ export default function MamaPage() {
         if (res.data) setMedications(res.data);
     };
 
+    const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
     const saveMessages = (msgs: ChatMessage[]) => {
         setMessages(msgs);
-        if (typeof window !== "undefined") localStorage.setItem("smama_chat_messages", JSON.stringify(msgs));
+        if (typeof window === "undefined") return;
+
+        // THROTTLE: Only write to localStorage at most once every 1000ms
+        // This prevents mobile jank when history gets long.
+        if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+        saveTimeoutRef.current = setTimeout(() => {
+            localStorage.setItem("smama_chat_messages", JSON.stringify(msgs));
+        }, 1000);
     };
 
     const handleSend = async (manualInput?: string) => {

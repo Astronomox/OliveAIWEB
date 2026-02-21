@@ -171,7 +171,7 @@ export default function RemindersPage() {
                         {weekDays.map((day, i) => {
                             const dayIndex = (today - 6 + i + 7) % 7;
                             const isToday = i === 6;
-                            const height = stats && stats.total > 0 ? Math.max(15, Math.round((complianceRate + (Math.random() * 20 - 10)) * 1.2)) : 15;
+                            const height = stats && stats.total > 0 ? Math.max(15, complianceRate) : 15;
                             const capped = Math.min(100, Math.max(10, height));
                             return (
                                 <div key={i} className="flex flex-col items-center gap-1 flex-1">

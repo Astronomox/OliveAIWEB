@@ -88,18 +88,26 @@ export default function DashboardPage() {
     const fetchAll = async () => {
         if (!user) return;
         setIsLoading(true);
-        const [remRes, statsRes, medsRes, rxRes] = await Promise.all([
+
+        // OPTIMIZATION: Promise.allSettled ensures if 1 API fails (e.g. reminders), the rest still load
+        const results = await Promise.allSettled([
             remindersApi.getAll(user.id, undefined, 3),
             remindersApi.getStats(user.id),
             medicationsApi.getAll(user.id, "active"),
             prescriptionsApi.getAll(user.id),
         ]);
-        if (remRes.data) setReminders(remRes.data);
-        if (statsRes.data) setStats(statsRes.data);
-        if (medsRes.data) {
+
+        const remRes = results[0].status === "fulfilled" ? results[0].value : null;
+        const statsRes = results[1].status === "fulfilled" ? results[1].value : null;
+        const medsRes = results[2].status === "fulfilled" ? results[2].value : null;
+        const rxRes = results[3].status === "fulfilled" ? results[3].value : null;
+
+        if (remRes?.data) setReminders(remRes.data);
+        if (statsRes?.data) setStats(statsRes.data);
+        if (medsRes?.data) {
             setMedications(medsRes.data);
             // Build recent activity from medications
-            const activity = medsRes.data.slice(0, 5).map(m => ({
+            const activity = medsRes.data.slice(0, 5).map((m: MedicationResponse) => ({
                 action: m.status === "active" ? "Taking" : "Completed",
                 drug: `${m.drug_name} ${m.dosage || ""}`,
                 time: m.created_at,
@@ -107,7 +115,7 @@ export default function DashboardPage() {
             }));
             setRecentActivity(activity);
         }
-        if (rxRes.data) setPrescriptionCount(rxRes.data.length);
+        if (rxRes?.data) setPrescriptionCount(rxRes.data.length);
         setIsLoading(false);
     };
 

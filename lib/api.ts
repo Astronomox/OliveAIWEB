@@ -1,229 +1,397 @@
-// lib/api.ts — Central Medi-Sync AI API Client (NON-NEGOTIABLE single source)
-// Every API call MUST go through this client. No raw fetch() in components.
-// Token management delegated to lib/auth.ts
+/**
+ * lib/api.ts
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Single, canonical HTTP client for Olive AI.
+ *
+ * ARCHITECTURE FIX: Eliminates the three competing HTTP implementations
+ * (lib/api.ts, lib/api-client.ts, services/backend.ts).  This is the ONE
+ * source of truth for making requests to the FastAPI backend.
+ *
+ * Features:
+ *   - Automatic JWT Authorization header injection
+ *   - 401 → token refresh → retry once
+ *   - Render.com cold-start wake-up on first mount (see wakeUpBackend())
+ *   - Request timeout (10s default)
+ *   - Typed response helpers: apiGet, apiPost, apiPut, apiDelete
+ *   - Normalised ApiError class for consistent error handling across the app
+ *
+ * Free platform recommendation:
+ *   - Backend hosting: Railway (free tier, no cold starts) or Render (free, cold starts)
+ *   - If on Render free tier: the wakeUpBackend() call below prevents blank dashboards
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 
-import {
-    getToken, clearAuth, isTokenExpired,
-} from "@/lib/auth";
+import { getToken, clearAuthData } from "@/lib/auth";
 
-const BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL ||
-    "https://olive-backend-bly2.onrender.com";
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-// ─── Typed Response Wrapper ────────────────────────────────────
 export interface ApiResponse<T> {
-    data: T | null;
-    error: ApiError | null;
-    status: number;
+  data: T | null;
+  status: number;
+  error: { message: string; code?: string; detail?: any } | null;
 }
 
-export interface ApiError {
-    message: string;
-    fieldErrors?: Record<string, string>;
-    statusCode: number;
+// ─── Configuration ────────────────────────────────────────────────────────────
+
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  process.env.NEXT_PUBLIC_BACKEND_URL ??
+  "https://olive-backend-bly2.onrender.com";
+
+const DEFAULT_TIMEOUT_MS = 10_000;
+const WAKE_UP_TIMEOUT_MS = 30_000; // Render cold starts can take up to 30s
+
+// ─── Error Class ──────────────────────────────────────────────────────────────
+
+export class ApiError extends Error {
+  public readonly status: number;
+  public readonly code: string;
+  public readonly details: unknown;
+
+  constructor(message: string, status: number, code = "API_ERROR", details?: unknown) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.code = code;
+    this.details = details;
+  }
+
+  get isUnauthorized(): boolean {
+    return this.status === 401;
+  }
+
+  get isNotFound(): boolean {
+    return this.status === 404;
+  }
+
+  get isServerError(): boolean {
+    return this.status >= 500;
+  }
+
+  get isNetworkError(): boolean {
+    return this.status === 0;
+  }
 }
 
-export interface ValidationDetail {
-    loc: (string | number)[];
-    msg: string;
-    type: string;
+// ─── Backend Wake-Up (Render Free Tier) ──────────────────────────────────────
+
+let _wakeUpPromise: Promise<void> | null = null;
+let _isAwake = false;
+
+/**
+ * Pings the backend health endpoint to wake up a sleeping Render.com free-tier
+ * instance. Call this early in the app lifecycle (e.g., in the root layout or
+ * dashboard useEffect) to avoid the user staring at a blank screen for 30s.
+ *
+ * This function is safe to call multiple times — it only fires one request.
+ */
+export async function wakeUpBackend(): Promise<void> {
+  if (_isAwake) return;
+
+  if (!_wakeUpPromise) {
+    _wakeUpPromise = (async () => {
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), WAKE_UP_TIMEOUT_MS);
+
+        await fetch(`${BACKEND_URL}/health`, {
+          method: "GET",
+          signal: controller.signal,
+        });
+
+        clearTimeout(timer);
+        _isAwake = true;
+      } catch {
+        // Wake-up failed (instance unavailable or timed out).
+        // The app continues — individual requests will show their own errors.
+        _isAwake = false;
+        _wakeUpPromise = null;
+      }
+    })();
+  }
+
+  return _wakeUpPromise;
 }
 
-// ─── Re-export auth helpers so existing imports keep working ───
-export {
-    getToken, getUserId, setToken, setUserId, clearAuth,
-} from "@/lib/auth";
+// ─── Core Request Function ────────────────────────────────────────────────────
 
-// ─── Offline event bus ─────────────────────────────────────────
-type OfflineListener = (offline: boolean) => void;
-const offlineListeners: OfflineListener[] = [];
-
-export function onOfflineChange(fn: OfflineListener) {
-    offlineListeners.push(fn);
-    return () => {
-        const idx = offlineListeners.indexOf(fn);
-        if (idx !== -1) offlineListeners.splice(idx, 1);
-    };
+interface RequestOptions extends Omit<RequestInit, "body"> {
+  body?: unknown;
+  timeoutMs?: number;
+  /** Skip adding the Authorization header (e.g., login, signup) */
+  skipAuth?: boolean;
+  /** Skip the 401-refresh retry (prevents infinite loop inside the refresh call) */
+  skipRefresh?: boolean;
 }
 
-function notifyOffline(offline: boolean) {
-    offlineListeners.forEach((fn) => fn(offline));
-}
+/**
+ * Core fetch wrapper. Handles:
+ * - Base URL prepending
+ * - Content-Type / Accept headers
+ * - JWT injection
+ * - Timeout via AbortController
+ * - Error response normalization into ApiError
+ * - 401 retry with token refresh (once)
+ */
+async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  const { body, timeoutMs = DEFAULT_TIMEOUT_MS, skipAuth = false, skipRefresh = false, ...fetchOptions } = options;
 
-// ─── Retry helper ──────────────────────────────────────────────
-async function sleep(ms: number) {
-    return new Promise((r) => setTimeout(r, ms));
-}
+  // Build headers
+  const headers = new Headers(fetchOptions.headers);
 
-// ─── Core request function ─────────────────────────────────────
-async function request<T>(
-    endpoint: string,
-    options: RequestInit = {},
-    retries = 3
-): Promise<ApiResponse<T>> {
-    const url = `${BASE_URL}${endpoint}`;
+  if (body !== undefined && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+  headers.set("Accept", "application/json");
 
-    // Proactive token expiry check (skip for login/register/public endpoints)
-    const isAuthEndpoint = endpoint.includes("/login") || endpoint.includes("/users/") && options.method === "POST" && !endpoint.includes("/verify");
-    if (!isAuthEndpoint && isTokenExpired() && getToken()) {
-        clearAuth();
-        if (typeof window !== "undefined" && !window.location.pathname.includes("/login")) {
-            window.location.href = "/login?reason=session_expired";
-        }
-        return {
-            data: null,
-            error: { message: "Session expired. Please login again.", statusCode: 401 },
-            status: 401,
-        };
-    }
-
-    const headers = new Headers(options.headers);
+  // Inject JWT
+  if (!skipAuth) {
     const token = getToken();
     if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
+      headers.set("Authorization", `Bearer ${token}`);
     }
-    // Don't set Content-Type for FormData (browser sets multipart boundary)
-    if (!(options.body instanceof FormData)) {
-        headers.set("Content-Type", "application/json");
+  }
+
+  // Timeout via AbortController
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  const url = path.startsWith("http") ? path : `${BACKEND_URL}${path}`;
+
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      ...fetchOptions,
+      headers,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+      signal: controller.signal,
+    });
+  } catch (err) {
+    clearTimeout(timer);
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw new ApiError(`Request to ${path} timed out after ${timeoutMs}ms`, 0, "TIMEOUT");
     }
+    throw new ApiError(`Network error: ${(err as Error).message}`, 0, "NETWORK_ERROR");
+  } finally {
+    clearTimeout(timer);
+  }
 
-    const config: RequestInit = { ...options, headers };
+  // ── 401: Attempt token refresh once ──────────────────────────────────────
+  if (response.status === 401 && !skipRefresh && !skipAuth) {
+    const refreshed = await tryRefreshToken();
+    if (refreshed) {
+      // Retry original request with new token
+      return request<T>(path, { ...options, skipRefresh: true });
+    } else {
+      // Refresh failed — user must log in again
+      clearAuthData();
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+      throw new ApiError("Session expired. Please log in again.", 401, "SESSION_EXPIRED");
+    }
+  }
 
-    for (let attempt = 0; attempt < retries; attempt++) {
-        try {
-            const response = await fetch(url, config);
-
-            // ── 401: Unauthorized → clear token → redirect ──────────
-            if (response.status === 401) {
-                clearAuth();
-                if (typeof window !== "undefined" && !window.location.pathname.includes("/login")) {
-                    window.location.href = "/login?reason=unauthorized";
-                }
-                return {
-                    data: null,
-                    error: { message: "Session expired. Please login again.", statusCode: 401 },
-                    status: 401,
-                };
-            }
-
-            // ── 409: Conflict (duplicate registration) ──────────────
-            if (response.status === 409) {
-                let message = "An account with this email or phone already exists";
-                try {
-                    const body = await response.json();
-                    message = typeof body.detail === "string" ? body.detail : body.message || message;
-                } catch { }
-                return {
-                    data: null,
-                    error: { message, statusCode: 409 },
-                    status: 409,
-                };
-            }
-
-            // ── 422: Validation Error → extract field errors ────────
-            if (response.status === 422) {
-                let fieldErrors: Record<string, string> = {};
-                let message = "Validation failed";
-                try {
-                    const body = await response.json();
-                    if (body.detail && Array.isArray(body.detail)) {
-                        (body.detail as ValidationDetail[]).forEach((d) => {
-                            const field = d.loc[d.loc.length - 1]?.toString() || "unknown";
-                            fieldErrors[field] = d.msg;
-                        });
-                        message = Object.values(fieldErrors).join(". ");
-                    } else if (typeof body.detail === "string") {
-                        message = body.detail;
-                    }
-                } catch { }
-                return {
-                    data: null,
-                    error: { message, fieldErrors, statusCode: 422 },
-                    status: 422,
-                };
-            }
-
-            // ── 503 / Server Error → retry ──────────────────────────
-            if (response.status >= 500) {
-                if (attempt < retries - 1) {
-                    await sleep(Math.pow(2, attempt) * 500);
-                    continue;
-                }
-                notifyOffline(true);
-                return {
-                    data: null,
-                    error: { message: "Server is temporarily unavailable. Please try again.", statusCode: response.status },
-                    status: response.status,
-                };
-            }
-
-            // ── Other errors ────────────────────────────────────────
-            if (!response.ok) {
-                let message = "An unexpected error occurred";
-                try {
-                    const body = await response.json();
-                    message = typeof body.detail === "string" ? body.detail : body.message || message;
-                } catch { }
-                return {
-                    data: null,
-                    error: { message, statusCode: response.status },
-                    status: response.status,
-                };
-            }
-
-            // ── Success ─────────────────────────────────────────────
-            notifyOffline(false);
-            if (response.status === 204) {
-                return { data: {} as T, error: null, status: 204 };
-            }
-            const data = (await response.json()) as T;
-            return { data, error: null, status: response.status };
-
-        } catch (networkError) {
-            // Network failure → retry with exponential backoff
-            if (attempt < retries - 1) {
-                await sleep(Math.pow(2, attempt) * 500);
-                continue;
-            }
-            notifyOffline(true);
-            return {
-                data: null,
-                error: { message: "Network error — please check your connection.", statusCode: 0 },
-                status: 0,
-            };
-        }
+  // ── Non-OK responses ──────────────────────────────────────────────────────
+  if (!response.ok) {
+    let errorBody: { detail?: string; message?: string; code?: string } = {};
+    try {
+      errorBody = await response.json();
+    } catch {
+      // Non-JSON error body — use status text
     }
 
-    return {
-        data: null,
-        error: { message: "Request failed after retries.", statusCode: 0 },
-        status: 0,
-    };
+    const message =
+      errorBody.detail ?? errorBody.message ?? `Request failed with status ${response.status}`;
+
+    throw new ApiError(message, response.status, errorBody.code ?? "API_ERROR", errorBody);
+  }
+
+  // ── 204 No Content ────────────────────────────────────────────────────────
+  if (response.status === 204) {
+    return undefined as unknown as T;
+  }
+
+  // ── Parse JSON ────────────────────────────────────────────────────────────
+  try {
+    return (await response.json()) as T;
+  } catch {
+    throw new ApiError("Failed to parse server response as JSON", response.status, "PARSE_ERROR");
+  }
 }
 
-// ─── Public HTTP methods ───────────────────────────────────────
+// ─── Token Refresh ────────────────────────────────────────────────────────────
+
+async function tryRefreshToken(): Promise<boolean> {
+  // Import here to avoid circular dependency at module load time
+  const { getAuthTokens, setAuthData, parseAuthResponse } = await import("@/lib/auth");
+
+  const tokens = getAuthTokens();
+  if (!tokens?.refreshToken) return false;
+
+  try {
+    const response = await request<{
+      access_token: string;
+      refresh_token?: string;
+      token_type: string;
+    }>("/auth/refresh", {
+      method: "POST",
+      body: { refresh_token: tokens.refreshToken },
+      skipAuth: true,
+      skipRefresh: true,
+    });
+
+    const parsed = parseAuthResponse(response);
+    if (!parsed) return false;
+
+    // Preserve existing user data while updating tokens
+    const { getCurrentUser } = await import("@/lib/auth");
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+      setAuthData(currentUser, parsed.tokens);
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// ─── Typed HTTP Helpers ───────────────────────────────────────────────────────
+
+export async function apiGet<T>(path: string, options?: Omit<RequestOptions, "method" | "body">): Promise<T> {
+  return request<T>(path, { ...options, method: "GET" });
+}
+
+export async function apiPost<T>(
+  path: string,
+  body?: unknown,
+  options?: Omit<RequestOptions, "method" | "body">
+): Promise<T> {
+  return request<T>(path, { ...options, method: "POST", body });
+}
+
+export async function apiPut<T>(
+  path: string,
+  body?: unknown,
+  options?: Omit<RequestOptions, "method" | "body">
+): Promise<T> {
+  return request<T>(path, { ...options, method: "PUT", body });
+}
+
+export async function apiPatch<T>(
+  path: string,
+  body?: unknown,
+  options?: Omit<RequestOptions, "method" | "body">
+): Promise<T> {
+  return request<T>(path, { ...options, method: "PATCH", body });
+}
+
+export async function apiDelete<T>(
+  path: string,
+  options?: Omit<RequestOptions, "method">
+): Promise<T> {
+  return request<T>(path, { ...options, method: "DELETE" });
+}
+
+// ─── Compatibility: api object wrapper ───────────────────────────────────────
+
+/**
+ * Modern wrapper that returns an ApiResponse object instead of throwing.
+ * This matches the pattern expected by the services/api/ folder.
+ */
+async function wrap<T>(promise: Promise<T>, statusOnSuccess = 200): Promise<ApiResponse<T>> {
+  try {
+    const data = await promise;
+    return { data, status: statusOnSuccess, error: null };
+  } catch (err) {
+    if (err instanceof ApiError) {
+      return {
+        data: null,
+        status: err.status,
+        error: { message: err.message, code: err.code, detail: err.details },
+      };
+    }
+    return {
+      data: null,
+      status: 0,
+      error: { message: (err as Error).message || "Unknown error" },
+    };
+  }
+}
+
 export const api = {
-    get<T>(endpoint: string) {
-        return request<T>(endpoint, { method: "GET" });
-    },
-
-    post<T>(endpoint: string, body?: unknown) {
-        const isFormData = body instanceof FormData;
-        return request<T>(endpoint, {
-            method: "POST",
-            body: isFormData ? (body as FormData) : body !== undefined ? JSON.stringify(body) : undefined,
-        });
-    },
-
-    put<T>(endpoint: string, body?: unknown) {
-        const isFormData = body instanceof FormData;
-        return request<T>(endpoint, {
-            method: "PUT",
-            body: isFormData ? (body as FormData) : body !== undefined ? JSON.stringify(body) : undefined,
-        });
-    },
-
-    delete<T>(endpoint: string) {
-        return request<T>(endpoint, { method: "DELETE" });
-    },
+  get: <T>(path: string, opt?: any) => wrap<T>(apiGet<T>(path, opt)),
+  post: <T>(path: string, body?: any, opt?: any) => wrap<T>(apiPost<T>(path, body, opt), 201),
+  put: <T>(path: string, body?: any, opt?: any) => wrap<T>(apiPut<T>(path, body, opt)),
+  patch: <T>(path: string, body?: any, opt?: any) => wrap<T>(apiPatch<T>(path, body, opt)),
+  delete: <T>(path: string, opt?: any) => wrap<T>(apiDelete<T>(path, opt)),
+  upload: <T>(path: string, fd: FormData, opt?: any) => wrap<T>(apiUpload<T>(path, fd, opt), 201),
 };
+
+// ─── Multipart / FormData Upload ──────────────────────────────────────────────
+
+export async function apiUpload<T>(
+  path: string,
+  formData: FormData,
+  options?: Omit<RequestOptions, "method" | "body" | "headers">
+): Promise<T> {
+  // Note: Do NOT set Content-Type manually — the browser sets it with the
+  // correct multipart boundary when FormData is passed directly.
+  const token = getToken();
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), options?.timeoutMs ?? 60_000);
+
+  try {
+    const url = path.startsWith("http") ? path : `${BACKEND_URL}${path}`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: formData,
+      signal: controller.signal,
+    });
+
+    clearTimeout(timer);
+
+    if (!response.ok) {
+      let errorBody: { detail?: string } = {};
+      try { errorBody = await response.json(); } catch { /* ignore */ }
+      throw new ApiError(errorBody.detail ?? "Upload failed", response.status, "UPLOAD_ERROR");
+    }
+
+    return response.json() as Promise<T>;
+  } catch (err) {
+    clearTimeout(timer);
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(`Upload network error: ${(err as Error).message}`, 0, "NETWORK_ERROR");
+  }
+}
+
+// ─── Utility: Safe Settled Fetches ────────────────────────────────────────────
+
+/**
+ * Like Promise.allSettled but returns typed results.
+ * Use this instead of Promise.all for dashboard parallel fetches so
+ * one failed API call doesn't kill the entire dashboard.
+ *
+ * @example
+ * const [medications, reminders, profile] = await safeParallelFetch([
+ *   () => apiGet('/medications'),
+ *   () => apiGet('/reminders'),
+ *   () => apiGet('/profile'),
+ * ]);
+ */
+export async function safeParallelFetch<T extends readonly (() => Promise<unknown>)[]>(
+  fetchers: T
+): Promise<{ [K in keyof T]: Awaited<ReturnType<T[K]>> | null }> {
+  const results = await Promise.allSettled(fetchers.map((fn) => fn()));
+
+  return results.map((result) =>
+    result.status === "fulfilled" ? result.value : null
+  ) as { [K in keyof T]: Awaited<ReturnType<T[K]>> | null };
+}
+
+export { BACKEND_URL };

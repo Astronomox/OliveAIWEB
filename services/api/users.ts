@@ -80,10 +80,9 @@ export const usersApi = {
         return api.post<SuccessResponse>(`/api/users/${userId}/confirm-email?otp_code=${encodeURIComponent(otpCode)}`);
     },
 
-    /** Get cached user from localStorage */
+    /** Get cached user from sessionStorage */
     getCachedUser(): UserResponse | null {
-        if (typeof window === "undefined") return null;
-        const raw = localStorage.getItem("smama_user");
-        return raw ? JSON.parse(raw) : null;
+        const { getCachedUser: getAuthCachedUser } = require("@/lib/auth");
+        return getAuthCachedUser<UserResponse>();
     },
 };

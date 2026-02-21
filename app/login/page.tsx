@@ -7,7 +7,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
     Leaf, Mail, Lock, ArrowRight, AlertCircle,
-    Eye, EyeOff, CheckCircle
+    Eye, EyeOff, CheckCircle, Loader2
 } from "lucide-react";
 import { usersApi } from "@/services/api";
 import { cn } from "@/lib/utils";

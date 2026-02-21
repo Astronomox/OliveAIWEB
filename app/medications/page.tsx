@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     Pill, Plus, Trash2, Activity, CheckCircle, Edit,
     ChevronRight, Calendar, Bell, Clock, Info, ShieldCheck,
-    AlertCircle, Search, Save, X, Smartphone
+    AlertCircle, AlertTriangle, Search, Save, X, Smartphone, BarChart3, Timer
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth, useToast } from "@/hooks";

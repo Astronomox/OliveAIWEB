@@ -43,7 +43,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, error: "No image data provided" }, { status: 400 });
         }
 
-        const apiKey = process.env.GOOGLE_VISION_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_VISION_API_KEY;
+        const apiKey = process.env.GOOGLE_VISION_API_KEY;
         if (!apiKey) {
             return NextResponse.json({ success: false, error: "Vision API not configured" }, { status: 500 });
         }

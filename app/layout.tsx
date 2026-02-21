@@ -6,6 +6,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { cn } from "@/lib/utils";
+import { BackendWakeup } from "@/components/layout/BackendWakeup";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -37,6 +38,7 @@ export default function RootLayout({
     return (
         <html lang="en" className={cn(inter.variable, outfit.variable)}>
             <body className="flex flex-col min-h-screen bg-cream selection:bg-primary-100 selection:text-primary-900">
+                <BackendWakeup />
                 <Navbar />
 
                 <div className="flex flex-1">

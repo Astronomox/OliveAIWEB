@@ -33,6 +33,7 @@ export default function ScanPage() {
     const [scanHistory, setScanHistory] = useState<any[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         if (mode === "camera") {
