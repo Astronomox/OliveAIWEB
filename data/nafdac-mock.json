@@ -1,0 +1,408 @@
+[
+    {
+        "id": "drug_001",
+        "nafdac_number": "A4-1234",
+        "name": "Emzor Paracetamol",
+        "generic_name": "Paracetamol",
+        "manufacturer": "Emzor Pharmaceuticals Industries Ltd.",
+        "country_of_manufacture": "Nigeria",
+        "dosage_form": "Tablet",
+        "strength": "500mg",
+        "pregnancy_category": "B",
+        "pregnancy_safe": true,
+        "trimester_risks": {
+            "first": "safe",
+            "second": "safe",
+            "third": "safe"
+        },
+        "breastfeeding_safe": true,
+        "is_authentic": true,
+        "common_fakes": [
+            "Emzor Paracetmol",
+            "Emzhor Paracetamol"
+        ],
+        "nafdac_number_variants": [
+            "A41234",
+            "04-1234"
+        ],
+        "side_effects": [
+            "Nausea",
+            "Skin rash"
+        ],
+        "contraindications": [
+            "Liver disease",
+            "Alcoholism"
+        ],
+        "pidgin_warning": "This paracetamol safe for your belle. Use am if your head dey pain you, but no pass 2 tablets at once.",
+        "safe_alternatives": [],
+        "controlled_substance": false,
+        "verified_date": "2024-01-15T10:00:00Z",
+        "price_range_naira": "N500 - N1,200"
+    },
+    {
+        "id": "drug_002",
+        "nafdac_number": "04-5678",
+        "name": "Lonart DS",
+        "generic_name": "Artemether + Lumefantrine",
+        "manufacturer": "Bliss GVS Pharma Ltd.",
+        "country_of_manufacture": "India",
+        "dosage_form": "Tablet",
+        "strength": "80mg/480mg",
+        "pregnancy_category": "C",
+        "pregnancy_safe": true,
+        "trimester_risks": {
+            "first": "caution",
+            "second": "safe",
+            "third": "safe"
+        },
+        "breastfeeding_safe": true,
+        "is_authentic": true,
+        "common_fakes": [
+            "Lonat DS",
+            "Lornart DS"
+        ],
+        "nafdac_number_variants": [
+            "045678",
+            "A4-5678"
+        ],
+        "side_effects": [
+            "Dizziness",
+            "Loss of appetite",
+            "Palpitations"
+        ],
+        "contraindications": [
+            "Severe malaria",
+            "First trimester unless prescribed"
+        ],
+        "pidgin_warning": "This malaria medicine safe small for middle and last 3 months. But for first 3 months, only take am if doctor say make you take am.",
+        "safe_alternatives": [
+            "Amoxicillin (if infection)"
+        ],
+        "controlled_substance": false,
+        "verified_date": "2024-02-01T08:30:00Z",
+        "price_range_naira": "N1,500 - N3,000"
+    },
+    {
+        "id": "drug_003",
+        "nafdac_number": "01-9876",
+        "name": "Ibuprofen BP",
+        "generic_name": "Ibuprofen",
+        "manufacturer": "M&B Pharmaceuticals Ltd.",
+        "country_of_manufacture": "Nigeria",
+        "dosage_form": "Tablet",
+        "strength": "400mg",
+        "pregnancy_category": "D",
+        "pregnancy_safe": false,
+        "trimester_risks": {
+            "first": "caution",
+            "second": "caution",
+            "third": "danger"
+        },
+        "breastfeeding_safe": true,
+        "is_authentic": true,
+        "common_fakes": [
+            "Ibupofen",
+            "Ibrufen"
+        ],
+        "nafdac_number_variants": [
+            "019876"
+        ],
+        "side_effects": [
+            "Stomach upset",
+            "Heartburn",
+            "Dizziness"
+        ],
+        "contraindications": [
+            "Asthma",
+            "Stomach ulcers",
+            "Third trimester of pregnancy"
+        ],
+        "pidgin_warning": "No take this medicine at all for your last 3 months! E fit stop your pikin heart or cause problem during born-born.",
+        "safe_alternatives": [
+            "Paracetamol"
+        ],
+        "controlled_substance": false,
+        "verified_date": "2023-12-10T14:45:00Z",
+        "price_range_naira": "N400 - N1,000"
+    },
+    {
+        "id": "drug_004",
+        "nafdac_number": "A4-2233",
+        "name": "Amoxil",
+        "generic_name": "Amoxicillin",
+        "manufacturer": "GlaxoSmithKline",
+        "country_of_manufacture": "UK",
+        "dosage_form": "Capsule",
+        "strength": "500mg",
+        "pregnancy_category": "B",
+        "pregnancy_safe": true,
+        "trimester_risks": {
+            "first": "safe",
+            "second": "safe",
+            "third": "safe"
+        },
+        "breastfeeding_safe": true,
+        "is_authentic": true,
+        "common_fakes": [
+            "Amoxil 500",
+            "Amoxisellin"
+        ],
+        "nafdac_number_variants": [
+            "A42233"
+        ],
+        "side_effects": [
+            "Diarrhea",
+            "Nausea",
+            "Vulvovaginal infection"
+        ],
+        "contraindications": [
+            "Penicillin allergy"
+        ],
+        "pidgin_warning": "This infection medicine safe for your belle. But make sure say you finish all the drugs wey doctor give you.",
+        "safe_alternatives": [],
+        "controlled_substance": false,
+        "verified_date": "2024-03-05T09:15:00Z",
+        "price_range_naira": "N2,000 - N5,000"
+    },
+    {
+        "id": "drug_005",
+        "nafdac_number": "04-8899",
+        "name": "Gaviscon Liquid",
+        "generic_name": "Sodium Alginates + Bicarbonate",
+        "manufacturer": "Reckitt Benckiser",
+        "country_of_manufacture": "Nigeria",
+        "dosage_form": "Syrup",
+        "strength": "500mg/10ml",
+        "pregnancy_category": "A",
+        "pregnancy_safe": true,
+        "trimester_risks": {
+            "first": "safe",
+            "second": "safe",
+            "third": "safe"
+        },
+        "breastfeeding_safe": true,
+        "is_authentic": true,
+        "common_fakes": [
+            "Gaviscon Heartburn",
+            "Gavisone"
+        ],
+        "nafdac_number_variants": [
+            "048899"
+        ],
+        "side_effects": [
+            "Constipation",
+            "Flatulence"
+        ],
+        "contraindications": [
+            "None known"
+        ],
+        "pidgin_warning": "This one very good for that chest burn (heartburn) wey dey worry you. E safe well well.",
+        "safe_alternatives": [],
+        "controlled_substance": false,
+        "verified_date": "2024-01-20T11:20:00Z",
+        "price_range_naira": "N3,500 - N6,000"
+    },
+    {
+        "id": "drug_006",
+        "nafdac_number": "B4-7766",
+        "name": "Aspirin 75",
+        "generic_name": "Acetylsalicylic Acid",
+        "manufacturer": "Bayer",
+        "country_of_manufacture": "Germany",
+        "dosage_form": "Tablet",
+        "strength": "75mg",
+        "pregnancy_category": "D",
+        "pregnancy_safe": false,
+        "trimester_risks": {
+            "first": "caution",
+            "second": "caution",
+            "third": "danger"
+        },
+        "breastfeeding_safe": false,
+        "is_authentic": true,
+        "common_fakes": [
+            "Asprin",
+            "Aspirine"
+        ],
+        "nafdac_number_variants": [
+            "B47766"
+        ],
+        "side_effects": [
+            "Stomach bleeding",
+            "Bruising",
+            "Tinnitus"
+        ],
+        "contraindications": [
+            "Peptic ulcer",
+            "Bleeding disorders"
+        ],
+        "pidgin_warning": "Only take this one if doctor say you must take am for your blood. Otherwise, e fit cause bleeding for your born-born time.",
+        "safe_alternatives": [
+            "Paracetamol"
+        ],
+        "controlled_substance": false,
+        "verified_date": "2023-11-25T16:00:00Z",
+        "price_range_naira": "N800 - N2,500"
+    },
+    {
+        "id": "drug_007",
+        "nafdac_number": "08-1122",
+        "name": "M&B Ferrous Gluconate",
+        "generic_name": "Ferrous Gluconate",
+        "manufacturer": "May & Baker Nigeria Plc",
+        "country_of_manufacture": "Nigeria",
+        "dosage_form": "Tablet",
+        "strength": "300mg",
+        "pregnancy_category": "A",
+        "pregnancy_safe": true,
+        "trimester_risks": {
+            "first": "safe",
+            "second": "safe",
+            "third": "safe"
+        },
+        "breastfeeding_safe": true,
+        "is_authentic": true,
+        "common_fakes": [
+            "MB Ferrous",
+            "Iron Tablets"
+        ],
+        "nafdac_number_variants": [
+            "081122"
+        ],
+        "side_effects": [
+            "Constipation",
+            "Dark stools",
+            "Stomach cramps"
+        ],
+        "contraindications": [
+            "Iron overload",
+            "Certain anemias"
+        ],
+        "pidgin_warning": "This iron medicine very good for your blood. Take am daily as your nurse talk.",
+        "safe_alternatives": [],
+        "controlled_substance": false,
+        "verified_date": "2024-02-15T12:00:00Z",
+        "price_range_naira": "N1,200 - N3,000"
+    },
+    {
+        "id": "drug_008",
+        "nafdac_number": "A1-4455",
+        "name": "Doliprane",
+        "generic_name": "Paracetamol",
+        "manufacturer": "Sanofi-Aventis",
+        "country_of_manufacture": "France",
+        "dosage_form": "Tablet",
+        "strength": "1000mg",
+        "pregnancy_category": "B",
+        "pregnancy_safe": true,
+        "trimester_risks": {
+            "first": "safe",
+            "second": "safe",
+            "third": "safe"
+        },
+        "breastfeeding_safe": true,
+        "is_authentic": true,
+        "common_fakes": [
+            "Dolipran",
+            "Doliprane 500"
+        ],
+        "nafdac_number_variants": [
+            "A14455"
+        ],
+        "side_effects": [
+            "Nausea",
+            "Allergic reaction"
+        ],
+        "contraindications": [
+            "Severe liver failure"
+        ],
+        "pidgin_warning": "Doliprane still be paracetamol. E safe well well, just make sure say you no take pass wetin doctor talk.",
+        "safe_alternatives": [],
+        "controlled_substance": false,
+        "verified_date": "2024-04-10T09:00:00Z",
+        "price_range_naira": "N2,500 - N5,000"
+    },
+    {
+        "id": "drug_009",
+        "nafdac_number": "04-3321",
+        "name": "Flagyl Oral Suspension",
+        "generic_name": "Metronidazole",
+        "manufacturer": "May & Baker Nigeria Plc",
+        "country_of_manufacture": "Nigeria",
+        "dosage_form": "Suspension",
+        "strength": "200mg/5ml",
+        "pregnancy_category": "B",
+        "pregnancy_safe": true,
+        "trimester_risks": {
+            "first": "caution",
+            "second": "safe",
+            "third": "safe"
+        },
+        "breastfeeding_safe": false,
+        "is_authentic": true,
+        "common_fakes": [
+            "Flagile",
+            "Metrozol"
+        ],
+        "nafdac_number_variants": [
+            "043321"
+        ],
+        "side_effects": [
+            "Metallic taste",
+            "Nausea",
+            "Dark urine"
+        ],
+        "contraindications": [
+            "Alcohol consumption",
+            "Severe liver disease"
+        ],
+        "pidgin_warning": "No take this one for your first 3 months unless doctor say you really need am. Also, no drink any alcohol at all if you dey take am.",
+        "safe_alternatives": [],
+        "controlled_substance": false,
+        "verified_date": "2024-02-28T14:30:00Z",
+        "price_range_naira": "N1,500 - N3,500"
+    },
+    {
+        "id": "drug_010",
+        "nafdac_number": "02-4455",
+        "name": "Panadol Extra",
+        "generic_name": "Paracetamol + Caffeine",
+        "manufacturer": "GlaxoSmithKline Nigeria Plc",
+        "country_of_manufacture": "Nigeria",
+        "dosage_form": "Tablet",
+        "strength": "500mg/65mg",
+        "pregnancy_category": "C",
+        "pregnancy_safe": false,
+        "trimester_risks": {
+            "first": "caution",
+            "second": "caution",
+            "third": "caution"
+        },
+        "breastfeeding_safe": true,
+        "is_authentic": true,
+        "common_fakes": [
+            "Panadol Extrar",
+            "Pandol"
+        ],
+        "nafdac_number_variants": [
+            "024455"
+        ],
+        "side_effects": [
+            "Insomnia",
+            "Restlessness",
+            "Tachycardia"
+        ],
+        "contraindications": [
+            "High blood pressure",
+            "Sensitive to caffeine"
+        ],
+        "pidgin_warning": "This one get caffeine join. Better make you take normal Panadol or Emzor Paracetamol. Caffeine fit make your pikin heart beat fast.",
+        "safe_alternatives": [
+            "Emzor Paracetamol",
+            "Normal Panadol"
+        ],
+        "controlled_substance": false,
+        "verified_date": "2024-01-05T10:00:00Z",
+        "price_range_naira": "N600 - N1,500"
+    }
+]

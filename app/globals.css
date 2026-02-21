@@ -1,0 +1,532 @@
+/* app/globals.css — Olive AI global styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════
+   CSS Custom Properties — Design Tokens
+   ═══════════════════════════════════════════════ */
+:root {
+  /* Brand Colors */
+  --color-primary: #0A6B4B;
+  --color-primary-light: #0E8F65;
+  --color-primary-dark: #054D36;
+  --color-secondary: #F5A623;
+  --color-secondary-light: #F7BC56;
+  --color-secondary-dark: #D98E1A;
+
+  /* Status Colors */
+  --color-safe: #00B894;
+  --color-caution: #F39C12;
+  --color-danger: #D63031;
+
+  /* Backgrounds */
+  --color-bg: #FDFAF6;
+  --color-bg-card: #FFFFFF;
+  --color-bg-elevated: #FFFFFF;
+  --color-border: #E8E8E8;
+
+  /* Text */
+  --color-text: #1A1A2E;
+  --color-text-muted: #6B7280;
+  --color-text-light: #9CA3AF;
+
+  /* Typography scale — adjustable for accessibility */
+  --text-scale: 1;
+  --text-body: calc(1rem * var(--text-scale));
+  --text-body-lg: calc(1.125rem * var(--text-scale));
+  --text-heading-sm: calc(1.25rem * var(--text-scale));
+  --text-heading: calc(1.5rem * var(--text-scale));
+  --text-heading-lg: calc(2rem * var(--text-scale));
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 3px rgba(10, 107, 75, 0.4);
+
+  /* Spacing for touch targets */
+  --touch-min: 48px;
+}
+
+/* ═══════════════════════════════════════════════
+   Dark Mode
+   ═══════════════════════════════════════════════ */
+.dark {
+  --color-bg: #1A1A2E;
+  --color-bg-card: #252542;
+  --color-bg-elevated: #2D2D52;
+  --color-border: #3A3A5C;
+  --color-text: #F0F0F5;
+  --color-text-muted: #9CA3AF;
+  --color-text-light: #6B7280;
+}
+
+/* ═══════════════════════════════════════════════
+   High Contrast Mode
+   ═══════════════════════════════════════════════ */
+.high-contrast {
+  --color-bg: #000000;
+  --color-bg-card: #000000;
+  --color-bg-elevated: #1A1A1A;
+  --color-border: #FFFFFF;
+  --color-text: #FFFFFF;
+  --color-text-muted: #FFFFFF;
+  --color-text-light: #CCCCCC;
+  --color-primary: #00FF88;
+  --color-safe: #00FF88;
+  --color-caution: #FFFF00;
+  --color-danger: #FF0000;
+}
+
+.high-contrast * {
+  border-color: #FFFFFF !important;
+}
+
+/* ═══════════════════════════════════════════════
+   Text Size Classes — Accessibility
+   ═══════════════════════════════════════════════ */
+.text-size-small {
+  --text-scale: 0.9;
+}
+
+.text-size-medium {
+  --text-scale: 1;
+}
+
+.text-size-large {
+  --text-scale: 1.2;
+}
+
+.text-size-xl {
+  --text-scale: 1.4;
+}
+
+/* ═══════════════════════════════════════════════
+   Base Styles
+   ═══════════════════════════════════════════════ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+    font-size: var(--text-body);
+  }
+
+  body {
+    @apply font-body antialiased;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Respect user motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Keyboard focus indicators — only visible on keyboard nav */
+  *:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Remove default focus for mouse users */
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* High contrast mode from system preference */
+  @media (prefers-contrast: high) {
+    :root {
+      --color-primary: #006644;
+      --color-safe: #006644;
+      --color-danger: #CC0000;
+      --color-caution: #CC8800;
+    }
+  }
+
+  /* Heading hierarchy */
+  h1 {
+    @apply font-heading font-bold;
+    font-size: var(--text-heading-lg);
+  }
+
+  h2 {
+    @apply font-heading font-bold;
+    font-size: var(--text-heading);
+  }
+
+  h3 {
+    @apply font-heading font-semibold;
+    font-size: var(--text-heading-sm);
+  }
+
+  h4 {
+    @apply font-heading font-semibold;
+    font-size: var(--text-body-lg);
+  }
+
+  /* Links */
+  a {
+    @apply transition-colors duration-200;
+    color: var(--color-primary);
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Component Layer
+   ═══════════════════════════════════════════════ */
+@layer components {
+
+  /* Skip to content link — keyboard accessibility */
+  .skip-link {
+    @apply absolute -top-full left-4 z-[10000] rounded-b-lg px-6 py-3 font-bold text-white transition-all;
+    background-color: var(--color-primary);
+  }
+
+  .skip-link:focus {
+    @apply top-0;
+  }
+
+  /* Card base */
+  .card {
+    @apply rounded-2xl p-5 transition-all duration-300;
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .card:hover {
+    box-shadow: 0 8px 30px rgba(10, 107, 75, 0.1);
+  }
+
+  /* Button base — minimum 48px height for accessibility */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200;
+    min-height: var(--touch-min);
+    min-width: var(--touch-min);
+    padding: 12px 24px;
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  .btn-primary {
+    @apply btn text-white;
+    background-color: var(--color-primary);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-primary-dark);
+    box-shadow: 0 0 20px rgba(10, 107, 75, 0.25);
+  }
+
+  .btn-secondary {
+    @apply btn text-white;
+    background-color: var(--color-secondary);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--color-secondary-dark);
+  }
+
+  .btn-outline {
+    @apply btn;
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+    background: transparent;
+  }
+
+  .btn-outline:hover {
+    background-color: var(--color-primary);
+    color: white;
+  }
+
+  .btn-danger {
+    @apply btn text-white;
+    background-color: var(--color-danger);
+  }
+
+  .btn-ghost {
+    @apply btn;
+    background: transparent;
+    color: var(--color-text-muted);
+  }
+
+  .btn-ghost:hover {
+    background-color: rgba(10, 107, 75, 0.08);
+    color: var(--color-primary);
+  }
+
+  /* Badge base */
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold;
+  }
+
+  .badge-safe {
+    @apply badge text-white;
+    background-color: var(--color-safe);
+  }
+
+  .badge-caution {
+    @apply badge;
+    background-color: var(--color-caution);
+    color: #1A1A2E;
+  }
+
+  .badge-danger {
+    @apply badge text-white;
+    background-color: var(--color-danger);
+  }
+
+  /* Input base */
+  .input {
+    @apply w-full rounded-xl border px-4 font-body transition-all duration-200 placeholder:text-gray-400;
+    min-height: var(--touch-min);
+    border-color: var(--color-border);
+    background-color: var(--color-bg-card);
+    color: var(--color-text);
+    font-size: var(--text-body);
+  }
+
+  .input:focus {
+    border-color: var(--color-primary);
+    box-shadow: var(--focus-ring);
+    outline: none;
+  }
+
+  /* Floating action button for "Talk to Mama" */
+  .fab {
+    @apply fixed z-50 flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-300;
+    background-color: var(--color-primary);
+    width: 60px;
+    height: 60px;
+    bottom: 90px;
+    right: 20px;
+  }
+
+  .fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(10, 107, 75, 0.4);
+  }
+
+  @media (min-width: 1024px) {
+    .fab {
+      bottom: 30px;
+      right: 30px;
+      width: 64px;
+      height: 64px;
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Utility Layer
+   ═══════════════════════════════════════════════ */
+@layer utilities {
+
+  /* Visually hidden but accessible to screen readers */
+  .sr-only-focusable:focus {
+    @apply not-sr-only;
+  }
+
+  /* Gradient backgrounds */
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #0A6B4B 0%, #0E8F65 50%, #00B894 100%);
+  }
+
+  .bg-gradient-warm {
+    background: linear-gradient(135deg, #FDFAF6 0%, #FEF7E8 100%);
+  }
+
+  .bg-gradient-danger {
+    background: linear-gradient(135deg, #D63031 0%, #E17055 100%);
+  }
+
+  /* Glass effect */
+  .glass {
+    backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .dark .glass {
+    background-color: rgba(26, 26, 46, 0.75);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Animate on scroll */
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Loading shimmer */
+  .skeleton {
+    @apply animate-shimmer rounded-lg;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+  }
+
+  .dark .skeleton {
+    background: linear-gradient(90deg, #2D2D52 25%, #3A3A5C 50%, #2D2D52 75%);
+    background-size: 200% 100%;
+  }
+
+  /* Scrollbar styling */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-full;
+    background-color: rgba(10, 107, 75, 0.2);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(10, 107, 75, 0.4);
+  }
+
+  /* Animation Keyframes */
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes pulse-slow {
+
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+
+    50% {
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes spin-slow {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Utility classes for animations */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 8s ease-in-out infinite;
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 12s linear infinite;
+  }
+
+  /* Guaranteed spinner — used as JS-inline fallback */
+  @keyframes spinner-spin {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .spin {
+    animation: spinner-spin 0.75s linear infinite;
+    display: inline-block;
+  }
+
+  .shadow-soft-xl {
+    box-shadow: 0 20px 50px rgba(10, 107, 75, 0.08);
+  }
+
+  .shadow-glow {
+    box-shadow: 0 0 30px rgba(10, 107, 75, 0.15);
+  }
+
+  .shadow-glow-secondary {
+    box-shadow: 0 0 40px rgba(245, 166, 35, 0.2);
+  }
+
+  /* Shake animation for form errors */
+  @keyframes shake {
+
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+      transform: translateX(-4px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+      transform: translateX(4px);
+    }
+  }
+
+  .animate-shake {
+    animation: shake 0.5s ease-in-out;
+  }
+
+  /* Fade in */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+  }
+}
