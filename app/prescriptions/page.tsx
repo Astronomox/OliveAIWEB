@@ -72,9 +72,7 @@ export default function PrescriptionsPage() {
     const handleUpload = async () => {
         if (!user || !selectedFile) return;
         setIsUploading(true);
-        const formData = new FormData();
-        formData.append("file", selectedFile);
-        const res = await prescriptionsApi.create(user.id, formData);
+        const res = await prescriptionsApi.upload(user.id, selectedFile, true);
         if (res.data) {
             addToast("Prescription uploaded! OCR processing complete ✅", "success");
             setShowUpload(false);

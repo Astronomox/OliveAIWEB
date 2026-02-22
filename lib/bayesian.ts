@@ -202,7 +202,7 @@ export function isValidNAFDACNumber(number: string): boolean {
 export function extractNAFDACNumbers(text: string): string[] {
     const pattern = /[A-Z0-9]{1,2}\d?-\d{4,6}/gi;
     const matches = text.match(pattern);
-    return matches ? [...new Set(matches)] : [];
+    return matches ? Array.from(new Set(matches)) : [];
 }
 
 /**

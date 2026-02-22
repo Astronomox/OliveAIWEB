@@ -9,8 +9,8 @@ type OnStateChangeCallback = (state: VoiceState) => void;
 export function isSpeechRecognitionSupported(): boolean {
     if (typeof window === "undefined") return false;
     return !!(
-        window.SpeechRecognition ||
-        (window as unknown as { webkitSpeechRecognition: unknown }).webkitSpeechRecognition
+        (window as any).SpeechRecognition ||
+        (window as any).webkitSpeechRecognition
     );
 }
 
@@ -32,9 +32,8 @@ export function createSpeechRecognition(options: {
     if (!isSpeechRecognitionSupported()) return null;
 
     const SpeechRecognition =
-        window.SpeechRecognition ||
-        (window as unknown as { webkitSpeechRecognition: typeof window.SpeechRecognition })
-            .webkitSpeechRecognition;
+        (window as any).SpeechRecognition ||
+        (window as any).webkitSpeechRecognition;
 
     const recognition = new SpeechRecognition();
 
@@ -50,13 +49,13 @@ export function createSpeechRecognition(options: {
         options.onStateChange("listening");
     };
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
+    recognition.onresult = (event: any) => {
         const result = event.results[event.results.length - 1];
         const transcript = result[0].transcript;
         options.onResult(transcript, result.isFinal);
     };
 
-    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+    recognition.onerror = (event: any) => {
         const errorMessages: Record<string, string> = {
             "no-speech": "No speech detected. Please try again.",
             "audio-capture": "No microphone found. Please check your microphone.",

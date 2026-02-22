@@ -1,5 +1,6 @@
 // services/api/prescriptions.ts — Prescription service (typed)
-import { api, getUserId, type ApiResponse } from "@/lib/api";
+import { api, type ApiResponse } from "@/lib/api";
+import { getUserId } from "@/lib/auth";
 import type {
     PrescriptionCreate,
     PrescriptionUpdate,

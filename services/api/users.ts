@@ -1,6 +1,6 @@
 // services/api/users.ts — User service (typed, uses central api client + lib/auth)
 import { api, type ApiResponse } from "@/lib/api";
-import { setToken, setUserId, clearAuth, setCachedUser } from "@/lib/auth";
+import { setToken, setUserId, clearAuth, setCachedUser, getCachedUser } from "@/lib/auth";
 import type {
     UserCreate,
     LoginRequest,
@@ -82,7 +82,6 @@ export const usersApi = {
 
     /** Get cached user from sessionStorage */
     getCachedUser(): UserResponse | null {
-        const { getCachedUser: getAuthCachedUser } = require("@/lib/auth");
-        return getAuthCachedUser<UserResponse>();
+        return getCachedUser() as UserResponse | null;
     },
 };

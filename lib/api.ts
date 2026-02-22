@@ -38,6 +38,11 @@ const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL ??
   "https://olive-backend-bly2.onrender.com";
 
+// Add debug logging for backend URL
+if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_DEBUG_API === "true") {
+  console.log("🌐 Backend URL:", BACKEND_URL);
+}
+
 const DEFAULT_TIMEOUT_MS = 10_000;
 const WAKE_UP_TIMEOUT_MS = 30_000; // Render cold starts can take up to 30s
 
