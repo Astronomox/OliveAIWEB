@@ -43,8 +43,7 @@ export default function OlivePage() {
     const router = useRouter();
     const { user, isAuthenticated, isLoading: authLoading } = useAuth();
     const { toasts, addToast, removeToast } = useToast();
-    const { state, startListening, stopListening, transcript, speak } = useVoice();
-    const isListening = state === "listening";
+    const { isListening, transcript, startListening, stopListening, reset: resetVoice } = useVoice();
 
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState("");
@@ -190,7 +189,15 @@ export default function OlivePage() {
         saveMessages([]);
     };
 
-    const handleReadAloud = (text: string) => { speak(text); };
+    const handleReadAloud = (text: string) => {
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = language === 'en' ? 'en-US' : 'en-NG';
+            speechSynthesis.speak(utterance);
+        } else {
+            addToast('Text-to-speech not supported', 'error');
+        }
+    };
 
     if (authLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner size={40} /></div>;
 
