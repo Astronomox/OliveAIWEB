@@ -71,6 +71,7 @@ export interface OCRResult {
     manufacturer: string | null;
     expiryDate: string | null;
     batchNumber: string | null;
+    strength: string | null;
     confidence: number;
 }
 

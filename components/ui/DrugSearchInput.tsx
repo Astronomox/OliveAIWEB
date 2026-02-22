@@ -15,73 +15,73 @@ function generateMockDrugResults(query: string): DrugSuggestion[] {
         { 
             id: '1', name: 'Paracetamol', generic_name: 'Acetaminophen', manufacturer: 'Emzor Pharmaceuticals', 
             pregnancy_category: 'A', emdex_id: 'EMZ001',
-            trimester_risks: { first: 'safe', second: 'safe', third: 'safe' },
+            trimester_risks: { first: 'safe' as const, second: 'safe' as const, third: 'safe' as const },
             side_effects: ['Nausea', 'Rash'], dosage_form: 'Tablet', strength: '500mg'
         },
         { 
             id: '2', name: 'Panadol', generic_name: 'Acetaminophen', manufacturer: 'GSK Nigeria', 
             pregnancy_category: 'A', emdex_id: 'GSK002',
-            trimester_risks: { first: 'safe', second: 'safe', third: 'safe' },
+            trimester_risks: { first: 'safe' as const, second: 'safe' as const, third: 'safe' as const },
             side_effects: ['Nausea'], dosage_form: 'Tablet', strength: '500mg'
         },
         { 
             id: '3', name: 'Paradol Extra', generic_name: 'Acetaminophen + Caffeine', manufacturer: 'GSK Nigeria', 
             pregnancy_category: 'B', emdex_id: 'GSK003',
-            trimester_risks: { first: 'safe', second: 'safe', third: 'caution' },
+            trimester_risks: { first: 'safe' as const, second: 'safe' as const, third: 'caution' as const },
             side_effects: ['Insomnia', 'Headache'], dosage_form: 'Tablet', strength: '500mg + 65mg'
         },
         { 
             id: '4', name: 'Ibuprofen', generic_name: 'Ibuprofen', manufacturer: 'Drugfield Pharmaceuticals', 
             pregnancy_category: 'C', emdex_id: 'DRG001',
-            trimester_risks: { first: 'caution', second: 'caution', third: 'avoid' },
+            trimester_risks: { first: 'caution' as const, second: 'caution' as const, third: 'avoid' as const },
             side_effects: ['Stomach upset', 'Dizziness'], dosage_form: 'Tablet', strength: '400mg'
         },
         { 
             id: '5', name: 'Amoxicillin', generic_name: 'Amoxicillin', manufacturer: 'Emzor Pharmaceuticals', 
             pregnancy_category: 'A', emdex_id: 'EMZ002',
-            trimester_risks: { first: 'safe', second: 'safe', third: 'safe' },
+            trimester_risks: { first: 'safe' as const, second: 'safe' as const, third: 'safe' as const },
             side_effects: ['Diarrhea', 'Allergic reactions'], dosage_form: 'Capsule', strength: '250mg'
         },
         { 
             id: '6', name: 'Augmentin', generic_name: 'Amoxicillin + Clavulanate', manufacturer: 'GSK Nigeria', 
             pregnancy_category: 'B', emdex_id: 'GSK004',
-            trimester_risks: { first: 'safe', second: 'safe', third: 'safe' },
+            trimester_risks: { first: 'safe' as const, second: 'safe' as const, third: 'safe' as const },
             side_effects: ['Diarrhea', 'Nausea'], dosage_form: 'Tablet', strength: '625mg'
         },
         { 
             id: '7', name: 'Flagyl', generic_name: 'Metronidazole', manufacturer: 'Sanofi Nigeria', 
             pregnancy_category: 'B', emdex_id: 'SNF001',
-            trimester_risks: { first: 'caution', second: 'safe', third: 'safe' },
+            trimester_risks: { first: 'caution' as const, second: 'safe' as const, third: 'safe' as const },
             side_effects: ['Metallic taste', 'Nausea'], dosage_form: 'Tablet', strength: '200mg'
         },
         { 
             id: '8', name: 'Vitamin C', generic_name: 'Ascorbic Acid', manufacturer: 'Emzor Pharmaceuticals', 
             pregnancy_category: 'A', emdex_id: 'EMZ003',
-            trimester_risks: { first: 'safe', second: 'safe', third: 'safe' },
+            trimester_risks: { first: 'safe' as const, second: 'safe' as const, third: 'safe' as const },
             side_effects: ['None at normal doses'], dosage_form: 'Tablet', strength: '500mg'
         },
         { 
             id: '9', name: 'Folic Acid', generic_name: 'Folate', manufacturer: 'Various', 
             pregnancy_category: 'A', emdex_id: 'VAR001',
-            trimester_risks: { first: 'safe', second: 'safe', third: 'safe' },
+            trimester_risks: { first: 'safe' as const, second: 'safe' as const, third: 'safe' as const },
             side_effects: ['None at normal doses'], dosage_form: 'Tablet', strength: '5mg'
         },
         { 
             id: '10', name: 'Iron Tablets', generic_name: 'Ferrous Sulfate', manufacturer: 'Various', 
             pregnancy_category: 'A', emdex_id: 'VAR002',
-            trimester_risks: { first: 'safe', second: 'safe', third: 'safe' },
+            trimester_risks: { first: 'safe' as const, second: 'safe' as const, third: 'safe' as const },
             side_effects: ['Constipation', 'Dark stools'], dosage_form: 'Tablet', strength: '200mg'
         },
         { 
             id: '11', name: 'Septrin', generic_name: 'Cotrimoxazole', manufacturer: 'Various', 
             pregnancy_category: 'C', emdex_id: 'VAR003',
-            trimester_risks: { first: 'avoid', second: 'caution', third: 'avoid' },
+            trimester_risks: { first: 'avoid' as const, second: 'caution' as const, third: 'avoid' as const },
             side_effects: ['Skin rash', 'Nausea'], dosage_form: 'Tablet', strength: '480mg'
         },
         { 
             id: '12', name: 'Ciprotab', generic_name: 'Ciprofloxacin', manufacturer: 'Drugfield Pharmaceuticals', 
             pregnancy_category: 'C', emdex_id: 'DRG002',
-            trimester_risks: { first: 'avoid', second: 'avoid', third: 'avoid' },
+            trimester_risks: { first: 'avoid' as const, second: 'avoid' as const, third: 'avoid' as const },
             side_effects: ['Tendon problems', 'Nausea'], dosage_form: 'Tablet', strength: '500mg'
         },
     ];

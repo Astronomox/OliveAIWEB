@@ -365,6 +365,7 @@ export default function ScanPage() {
                                         rawText: `Search result for: ${drug.name}`,
                                         drugName: drug.name,
                                         nafdacNumber: drug.emdex_id || "Search-based",
+                                        manufacturer: drug.manufacturer || null,
                                         expiryDate: null,
                                         batchNumber: null,
                                         strength: drug.strength || null,

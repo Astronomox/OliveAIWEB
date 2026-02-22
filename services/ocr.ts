@@ -128,6 +128,19 @@ export function parseOCRText(rawText: string): Omit<OCRResult, "rawText"> {
         }
     }
 
+    // Extract strength/dosage
+    const strengthPatterns = [
+        /(\d+(?:\.\d+)?)\s*(mg|ml|mcg|g\b|IU|%|tablets?)/gi,
+    ];
+    let strength: string | null = null;
+    for (const pattern of strengthPatterns) {
+        const match = rawText.match(pattern);
+        if (match) {
+            strength = match[0];
+            break;
+        }
+    }
+
     // Calculate confidence based on how many fields we found
     let fieldsFound = 0;
     if (drugName) fieldsFound++;
@@ -135,7 +148,8 @@ export function parseOCRText(rawText: string): Omit<OCRResult, "rawText"> {
     if (manufacturer) fieldsFound++;
     if (expiryDate) fieldsFound++;
     if (batchNumber) fieldsFound++;
-    const confidence = fieldsFound / 5;
+    if (strength) fieldsFound++;
+    const confidence = fieldsFound / 6;
 
     return {
         drugName,
@@ -143,6 +157,7 @@ export function parseOCRText(rawText: string): Omit<OCRResult, "rawText"> {
         manufacturer,
         expiryDate,
         batchNumber,
+        strength,
         confidence,
     };
 }
