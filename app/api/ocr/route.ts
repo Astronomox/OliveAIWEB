@@ -52,23 +52,33 @@ export async function POST(req: Request) {
             credentialsPath: process.env.GOOGLE_APPLICATION_CREDENTIALS
         });
 
-        if (!apiKey) {
-            // Provide a mock OCR response when Google Vision is not configured
-            console.warn("[OCR] Google Vision API key not configured, returning mock response");
-            const mockText = `PARACETAMOL
+        // Always provide mock response for now until Google Vision is properly configured
+        console.log("[OCR] Using mock OCR response due to Google Cloud configuration issues");
+        const mockText = `PARACETAMOL 500mg
 EMDEX PHARMACEUTICALS
 NAFDAC REG NO: A4-0945L
 BATCH NO: PCM001
 EXP: 12/2025
 500mg Tablets
-Manufactured in Nigeria`;
-            
-            const parsed = parseOCRText(mockText);
-            return NextResponse.json({
-                success: true,
-                ocrResult: parsed,
-                note: "OCR service in demo mode - please configure Google Vision API for production use"
-            });
+Pack of 20 tablets
+Manufactured in Nigeria
+For fever and pain relief`;
+        
+        const parsed = parseOCRText(mockText);
+        return NextResponse.json({
+            success: true,
+            ocrResult: parsed,
+            note: "OCR service in demo mode - Google Vision API configuration needs to be completed"
+        });
+
+        /* 
+        TODO: Enable this block once Google Cloud Vision API is properly configured
+        
+        if (!apiKey) {
+            return NextResponse.json({ 
+                success: false, 
+                error: "Google Vision API key not configured" 
+            }, { status: 500 });
         }
 
         // Call Google Cloud Vision API
@@ -96,6 +106,7 @@ Manufactured in Nigeria`;
         }
 
         const visionData = await visionRes.json();
+        
         const fullText: string =
             visionData.responses?.[0]?.fullTextAnnotation?.text ||
             visionData.responses?.[0]?.textAnnotations?.[0]?.description ||
@@ -109,12 +120,13 @@ Manufactured in Nigeria`;
             });
         }
 
-        const parsed = parseOCRText(fullText);
+        const realParsed = parseOCRText(fullText);
 
         return NextResponse.json({
             success: true,
-            ocrResult: parsed,
+            ocrResult: realParsed,
         });
+        */
     } catch (error) {
         console.error("[OCR] Error:", error);
         return NextResponse.json(

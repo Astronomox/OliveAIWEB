@@ -18,18 +18,18 @@ import {
   ChevronDown,
   ChevronUp,
   RefreshCw,
+  ExternalLink,
+  AlertCircle,
 } from 'lucide-react';
-import { doctorsApi } from '@/services/api/doctors';
 import { useToast } from '@/hooks/useToast';
 import { useAuth } from '@/hooks/useAuth';
-import DoctorChatBot from '@/components/ui/DoctorChatBot';
-import type { DoctorResponse, DoctorSearchResponse } from '@/types/api';
+import type { DoctorResponse } from '@/types/api';
 
-// Mock data for offline functionality
+// Mock data for demonstration (since backend doesn't have doctor endpoints yet)
 const mockDoctors: DoctorResponse[] = [
   {
     id: '1',
-    name: 'Adaora Okafor',
+    name: 'Dr. Adaora Okafor',
     email: 'adaora.okafor@clinicmail.com',
     phone_number: '+234-803-123-4567',
     specialization: 'Obstetrics & Gynecology',
@@ -50,7 +50,7 @@ const mockDoctors: DoctorResponse[] = [
   },
   {
     id: '2',
-    name: 'Emeka Nwankwo',
+    name: 'Dr. Emeka Nwankwo',
     email: 'emeka.nwankwo@medicenter.com',
     phone_number: '+234-805-987-6543',
     specialization: 'Pediatrics',
@@ -71,7 +71,7 @@ const mockDoctors: DoctorResponse[] = [
   },
   {
     id: '3',
-    name: 'Fatima Ibrahim',
+    name: 'Dr. Fatima Ibrahim',
     email: 'fatima.ibrahim@healthcenter.ng',
     phone_number: '+234-807-456-1234',
     specialization: 'Family Medicine',
@@ -93,141 +93,106 @@ const mockDoctors: DoctorResponse[] = [
 ];
 
 const mockSpecializations = [
+  'All Specializations',
   'Obstetrics & Gynecology',
-  'Pediatrics', 
+  'Pediatrics',
   'Family Medicine',
-  'Internal Medicine',
   'Cardiology',
   'Dermatology',
-  'Psychiatry'
+  'Psychiatry',
+  'Orthopedics'
 ];
 
 export default function DoctorsPage() {
-  const [doctors, setDoctors] = useState<DoctorResponse[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [doctors, setDoctors] = useState<DoctorResponse[]>(mockDoctors);
+  const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSpecialization, setSelectedSpecialization] = useState('');
+  const [selectedSpecialization, setSelectedSpecialization] = useState('All Specializations');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [availabilityFilter, setAvailabilityFilter] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [specializations, setSpecializations] = useState<string[]>([]);
+  const [specializations, setSpecializations] = useState<string[]>(mockSpecializations);
   const [expandedDoctor, setExpandedDoctor] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   
   const { addToast } = useToast();
   const { user } = useAuth();
 
+  // Simulate API calls with mock data
   useEffect(() => {
-    fetchDoctors();
-    fetchSpecializations();
+    // Show a notice about demo mode
+    addToast('🩺 Demo Mode: Showing sample doctors. Real doctor integration coming soon!', 'info');
   }, []);
 
-  const fetchDoctors = async (filters?: {
-    specialization?: string;
-    location?: string;
-    availability_status?: string;
-  }) => {
-    try {
-      setLoading(true);
-      console.log('[Doctors] Fetching doctors with filters:', filters);
-      
-      const response = await doctorsApi.getAll({
-        ...filters,
-        limit: 20,
-      });
-      
-      console.log('[Doctors] API response:', response);
-      
-      if (response.data) {
-        setDoctors(response.data.results);
-        console.log('[Doctors] Set doctors from API:', response.data.results.length);
-      } else {
-        // Fallback with mock data if API fails
-        setDoctors(mockDoctors);
-        addToast('Using sample data - API connection pending', 'info');
-        console.log('[Doctors] Using mock data - no API response');
-      }
-    } catch (error) {
-      console.error('[Doctors] Error fetching doctors:', error);
-      setDoctors(mockDoctors);
-      addToast('Using sample data - Check your connection', 'error');
-      console.log('[Doctors] Using mock data due to error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchSpecializations = async () => {
-    try {
-      console.log('[Doctors] Fetching specializations');
-      const response = await doctorsApi.getSpecializations();
-      console.log('[Doctors] Specializations response:', response);
-      
-      if (response.data) {
-        setSpecializations(response.data);
-      } else {
-        setSpecializations(mockSpecializations);
-        console.log('[Doctors] Using mock specializations - no API response');
-      }
-    } catch (error) {
-      console.error('[Doctors] Error fetching specializations:', error);
-      setSpecializations(mockSpecializations);
-      console.log('[Doctors] Using mock specializations due to error');
-    }
-  };
-
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) {
-      fetchDoctors({
-        specialization: selectedSpecialization,
-        location: selectedLocation,
-        availability_status: availabilityFilter,
-      });
-      return;
-    }
-
-    try {
-      setIsSearching(true);
-      const response = await doctorsApi.search(searchQuery);
-      if (response.data) {
-        setDoctors(response.data.results);
-      }
-    } catch (error) {
-      addToast('Search failed. Please try again.', 'error');
-    } finally {
+  const handleSearch = (query: string) => {
+    setIsSearching(true);
+    setSearchQuery(query);
+    
+    // Simulate search with mock data
+    setTimeout(() => {
+      const filtered = mockDoctors.filter(doctor =>
+        doctor.name.toLowerCase().includes(query.toLowerCase()) ||
+        doctor.specialization.toLowerCase().includes(query.toLowerCase()) ||
+        (doctor.location && doctor.location.toLowerCase().includes(query.toLowerCase()))
+      );
+      setDoctors(filtered);
       setIsSearching(false);
+    }, 500);
+  };
+
+  const handleFilter = () => {
+    let filtered = mockDoctors;
+
+    if (selectedSpecialization && selectedSpecialization !== 'All Specializations') {
+      filtered = filtered.filter(doctor => doctor.specialization === selectedSpecialization);
     }
+
+    if (selectedLocation) {
+      filtered = filtered.filter(doctor => 
+        doctor.location && doctor.location.toLowerCase().includes(selectedLocation.toLowerCase())
+      );
+    }
+
+    if (availabilityFilter) {
+      filtered = filtered.filter(doctor => doctor.availability_status === availabilityFilter);
+    }
+
+    if (searchQuery) {
+      filtered = filtered.filter(doctor =>
+        doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doctor.specialization.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (doctor.location && doctor.location.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+
+    setDoctors(filtered);
   };
 
-  const handleFilterChange = () => {
-    fetchDoctors({
-      specialization: selectedSpecialization,
-      location: selectedLocation,
-      availability_status: availabilityFilter,
-    });
+  const clearFilters = () => {
+    setSearchQuery('');
+    setSelectedSpecialization('All Specializations');
+    setSelectedLocation('');
+    setAvailabilityFilter('');
+    setDoctors(mockDoctors);
   };
 
-  const handleConsultationRequest = async (doctorId: string, message: string) => {
+  const handleConsultationRequest = (doctorId: string, message: string) => {
     if (!user) {
       addToast('Please log in to request consultation', 'error');
       return;
     }
 
-    try {
-      const response = await doctorsApi.requestConsultation(doctorId, {
-        doctor_id: doctorId,
-        message: message,
-        urgency_level: 'medium'
-      });
+    // Simulate consultation request
+    addToast('🚀 Demo Mode: In production, this will connect to real doctor consultation APIs', 'info');
+    setTimeout(() => {
+      addToast('Consultation request would be sent successfully! 🩺', 'success');
+    }, 1000);
+  // Apply filters when they change
+  useEffect(() => {
+    handleFilter();
+  }, [selectedSpecialization, selectedLocation, availabilityFilter]);
 
-      if (response.data) {
-        addToast('Consultation request sent successfully! 🩺', 'success');
-      }
-    } catch (error) {
-      addToast('Failed to send consultation request', 'error');
-      console.error('Consultation request error:', error);
-    }
-  };
+  const filteredDoctors = doctors;
 
   const getAvailabilityColor = (status: string) => {
     switch (status) {
@@ -279,12 +244,12 @@ export default function DoctorsPage() {
                   placeholder="Search doctors, specializations, or hospitals..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch(searchQuery)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <button
-                onClick={handleSearch}
+                onClick={() => handleSearch(searchQuery)}
                 disabled={isSearching}
                 className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center justify-center"
               >
@@ -320,10 +285,7 @@ export default function DoctorsPage() {
                       </label>
                       <select
                         value={selectedSpecialization}
-                        onChange={(e) => {
-                          setSelectedSpecialization(e.target.value);
-                          setTimeout(handleFilterChange, 100);
-                        }}
+                        onChange={(e) => setSelectedSpecialization(e.target.value)}
                         className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       >
                         <option value="">All Specializations</option>
@@ -352,10 +314,7 @@ export default function DoctorsPage() {
                       </label>
                       <select
                         value={availabilityFilter}
-                        onChange={(e) => {
-                          setAvailabilityFilter(e.target.value);
-                          setTimeout(handleFilterChange, 100);
-                        }}
+                        onChange={(e) => setAvailabilityFilter(e.target.value)}
                         className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       >
                         <option value="">All Doctors</option>
@@ -562,19 +521,16 @@ export default function DoctorsPage() {
         )}
       </div>
 
-      {/* Floating Doctor Chatbot */}
-      <DoctorChatBot
-        onRequestConsultation={(message) => {
-          if (doctors.length > 0) {
-            const availableDoctor = doctors.find(d => d.availability_status === 'available');
-            if (availableDoctor) {
-              handleConsultationRequest(availableDoctor.id, message);
-            } else {
-              addToast('No doctors currently available. We\'ll connect you with the next available doctor.', 'info');
-            }
-          }
-        }}
-      />
+      {/* Demo Notice */}
+      <div className="fixed bottom-4 right-4 bg-blue-500 text-white p-4 rounded-lg shadow-lg max-w-sm">
+        <div className="flex items-start space-x-2">
+          <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-medium">Demo Mode</p>
+            <p className="text-xs opacity-90">Doctor consultations will be available when backend integration is complete.</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

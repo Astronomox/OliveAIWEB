@@ -26,7 +26,14 @@ export default function ScanPage() {
     const { profile } = usePregnancy();
     const { user, isAuthenticated } = useAuth();
 
-    const [mode, setMode] = useState<"camera" | "upload" | "search">("camera");
+    // Get last used mode from localStorage or default to camera
+    const [mode, setMode] = useState<"camera" | "upload" | "search">(() => {
+        if (typeof window !== 'undefined') {
+            const lastMode = localStorage.getItem('olive-scan-mode') as "camera" | "upload" | "search";
+            return lastMode || "camera";
+        }
+        return "camera";
+    });
     const [isProcessing, setIsProcessing] = useState(false);
     const [backendStatus, setBackendStatus] = useState<'online' | 'offline' | 'checking'>('checking');
     const [result, setResult] = useState<DrugMatch | null>(null);
@@ -35,18 +42,62 @@ export default function ScanPage() {
     const [error, setError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [isSaving, setIsSaving] = useState(false);
+    const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+    const [previousMode, setPreviousMode] = useState<"camera" | "upload" | "search">("camera");
+    const [isTransitioning, setIsTransitioning] = useState(false);
 
-    useEffect(() => {
-        if (mode === "camera") {
-            startCamera();
-        } else {
+    // Handle mode switching with proper cleanup
+    const switchMode = async (newMode: "camera" | "upload" | "search") => {
+        if (newMode === mode) return; // Already in this mode
+        
+        setIsTransitioning(true);
+        
+        // Don't clear results/errors when just switching modes
+        // Only clear when explicitly resetting
+        
+        if (newMode === "camera" && mode !== "camera") {
+            // Starting camera mode
+            await startCamera();
+        } else if (mode === "camera" && newMode !== "camera") {
+            // Leaving camera mode
             stopCamera();
         }
-        // Cleanup camera when component unmounts or page changes
+        
+        // Clean up upload image when leaving upload mode
+        if (mode === "upload" && newMode !== "upload" && uploadedImage) {
+            URL.revokeObjectURL(uploadedImage);
+            setUploadedImage(null);
+        }
+        
+        setPreviousMode(mode);
+        setMode(newMode);
+        
+        // Save mode preference to localStorage
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('olive-scan-mode', newMode);
+        }
+        
+        // Small delay for smooth transition
+        setTimeout(() => setIsTransitioning(false), 200);
+    };
+
+    useEffect(() => {
+        // Initialize camera if starting in camera mode
+        if (mode === "camera") {
+            startCamera();
+        }
+    }, []); // Only run on mount
+
+    // Separate effect for cleanup on unmount
+    useEffect(() => {
         return () => {
             stopCamera();
+            // Clean up uploaded image URL
+            if (uploadedImage) {
+                URL.revokeObjectURL(uploadedImage);
+            }
         };
-    }, [mode, startCamera, stopCamera]);
+    }, [stopCamera, uploadedImage]);
 
     // Add cleanup when leaving the page
     useEffect(() => {
@@ -98,6 +149,10 @@ export default function ScanPage() {
         setIsProcessing(true);
         setError(null);
         try {
+            // Create preview URL for the uploaded image
+            const imageUrl = URL.createObjectURL(file);
+            setUploadedImage(imageUrl);
+            
             const base64 = await imageToBase64(file);
             processImage(base64);
         } catch (err) {
@@ -180,7 +235,12 @@ export default function ScanPage() {
         setOcrData(null);
         setError(null);
         setSearchQuery("");
-        if (mode === "camera") startCamera();
+        // Clean up uploaded image preview
+        if (uploadedImage) {
+            URL.revokeObjectURL(uploadedImage);
+            setUploadedImage(null);
+        }
+        // Don't automatically restart camera - let user choose mode
     };
 
     return (
@@ -209,28 +269,35 @@ export default function ScanPage() {
             {/* Navigation Toggles */}
             <div className="flex bg-white dark:bg-gray-900 p-1 rounded-2xl shadow-sm border border-border">
                 <button
-                    onClick={() => setMode("camera")}
+                    onClick={() => switchMode("camera")}
+                    disabled={isTransitioning}
                     className={cn(
                         "flex-1 py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-sm font-bold transition-all",
-                        mode === "camera" ? "bg-primary-600 text-white shadow-glow" : "text-muted-foreground hover:bg-gray-100"
+                        mode === "camera" ? "bg-primary-600 text-white shadow-glow" : "text-muted-foreground hover:bg-gray-100",
+                        isTransitioning && "opacity-50 cursor-not-allowed"
                     )}
                 >
                     <Camera className="w-4 h-4" /> Camera
+                    {isTransitioning && mode !== "camera" && previousMode === "camera" && <Spinner size={16} color="currentColor" />}
                 </button>
                 <button
-                    onClick={() => setMode("upload")}
+                    onClick={() => switchMode("upload")}
+                    disabled={isTransitioning}
                     className={cn(
                         "flex-1 py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-sm font-bold transition-all",
-                        mode === "upload" ? "bg-primary-600 text-white shadow-glow" : "text-muted-foreground hover:bg-gray-100"
+                        mode === "upload" ? "bg-primary-600 text-white shadow-glow" : "text-muted-foreground hover:bg-gray-100",
+                        isTransitioning && "opacity-50 cursor-not-allowed"
                     )}
                 >
                     <Upload className="w-4 h-4" /> Upload
                 </button>
                 <button
-                    onClick={() => setMode("search")}
+                    onClick={() => switchMode("search")}
+                    disabled={isTransitioning}
                     className={cn(
                         "flex-1 py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-sm font-bold transition-all",
-                        mode === "search" ? "bg-primary-600 text-white shadow-glow" : "text-muted-foreground hover:bg-gray-100"
+                        mode === "search" ? "bg-primary-600 text-white shadow-glow" : "text-muted-foreground hover:bg-gray-100",
+                        isTransitioning && "opacity-50 cursor-not-allowed"
                     )}
                 >
                     <SearchIcon className="w-4 h-4" /> Search
@@ -239,27 +306,70 @@ export default function ScanPage() {
 
             {/* Main Scanner Area */}
             {!result && !error && (
-                <>
+                <div className={cn(
+                    "transition-all duration-300 ease-in-out",
+                    isTransitioning ? "opacity-50 scale-95" : "opacity-100 scale-100"
+                )}>
                     {mode === "search" ? (
                         <div className="card p-8 bg-white border-2 border-primary-100 text-center animate-fade-in">
                             <SearchIcon className="w-12 h-12 text-primary-200 mx-auto mb-4" />
                             <h3 className="text-xl font-black text-primary-900 mb-2">Drug Lookup</h3>
-                            <p className="text-white/60 text-sm mb-6">Type the name of the medicine manually to check safety.</p>
+                            <p className="text-gray-600 text-sm mb-6">Type the name of the medicine manually to check safety.</p>
 
                             <DrugSearchInput
                                 value={searchQuery}
                                 onChange={setSearchQuery}
                                 onSelect={(drug) => {
-                                    setResult({
+                                    console.log("Selected drug:", drug);
+                                    
+                                    // Convert DrugSuggestion to DrugMatch format
+                                    const drugMatch = {
                                         id: drug.id,
                                         name: drug.name,
-                                        generic_name: drug.generic_name,
-                                        manufacturer: drug.manufacturer,
+                                        generic_name: drug.generic_name || drug.name,
+                                        manufacturer: drug.manufacturer || "Unknown",
                                         confidence: 1.0,
-                                        trimester_risks: (drug as any).trimester_risks || {},
-                                        side_effects: (drug as any).side_effects || [],
-                                        category: (drug as any).pregnancy_category || "Unknown"
-                                    } as any);
+                                        dosage_form: drug.dosage_form || "Unknown",
+                                        strength: drug.strength || "Unknown",
+                                        pregnancy_category: drug.pregnancy_category || "Unknown",
+                                        trimester_risks: drug.trimester_risks || {
+                                            first: 'caution',
+                                            second: 'caution', 
+                                            third: 'caution'
+                                        },
+                                        side_effects: drug.side_effects || [],
+                                        category: drug.pregnancy_category || "Unknown",
+                                        drug: {
+                                            id: drug.id,
+                                            name: drug.name,
+                                            generic_name: drug.generic_name || drug.name,
+                                            manufacturer: drug.manufacturer || "Unknown",
+                                            dosage_form: drug.dosage_form || "Unknown",
+                                            strength: drug.strength || "Unknown",
+                                            pregnancy_category: drug.pregnancy_category || "Unknown",
+                                            trimester_risks: drug.trimester_risks || {
+                                                first: 'caution',
+                                                second: 'caution',
+                                                third: 'caution'
+                                            },
+                                            side_effects: drug.side_effects || []
+                                        }
+                                    };
+
+                                    const trimester = profile?.trimester || "first";
+                                    const risk = drugMatch.trimester_risks[trimester];
+                                    const recommendation = risk === "safe" ? "Safe to use" : risk === "caution" ? "Use with caution" : "Avoid using";
+                                    
+                                    setResult({ ...drugMatch, recommendation } as any);
+                                    setOcrData({
+                                        rawText: `Search result for: ${drug.name}`,
+                                        drugName: drug.name,
+                                        nafdacNumber: drug.emdex_id || "Search-based",
+                                        expiryDate: null,
+                                        batchNumber: null,
+                                        strength: drug.strength || null,
+                                        confidence: 1.0
+                                    });
                                 }}
                                 placeholder="Search by name or generic..."
                                 inputClassName="h-14 rounded-2xl"
@@ -319,24 +429,50 @@ export default function ScanPage() {
                                 </>
                             ) : (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-white text-center">
-                                    <Upload className="w-16 h-16 text-primary-400 mb-4" />
-                                    <h3 className="text-xl font-black mb-2">Upload Drug Image</h3>
-                                    <p className="text-white/60 text-sm mb-6">Drag &amp; drop or tap to choose a clear photo of the drug packaging.</p>
-                                    <input
-                                        type="file"
-                                        id="file-upload"
-                                        hidden
-                                        accept="image/jpeg,image/png,image/webp,image/heic,image/*"
-                                        onChange={handleFileInputChange}
-                                    />
-                                    <label
-                                        htmlFor="file-upload"
-                                        onDragOver={e => { e.preventDefault(); }}
-                                        onDrop={handleDrop}
-                                        className="btn-primary cursor-pointer py-4 px-8"
-                                    >
-                                        Choose / Drop Image
-                                    </label>
+                                    {uploadedImage ? (
+                                        <>
+                                            <img 
+                                                src={uploadedImage} 
+                                                alt="Uploaded drug image"
+                                                className="w-full h-full object-cover rounded-2xl"
+                                            />
+                                            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
+                                                <button
+                                                    onClick={() => {
+                                                        URL.revokeObjectURL(uploadedImage);
+                                                        setUploadedImage(null);
+                                                        // Reset file input
+                                                        const fileInput = document.getElementById('file-upload') as HTMLInputElement;
+                                                        if (fileInput) fileInput.value = '';
+                                                    }}
+                                                    className="bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-xl text-sm font-medium"
+                                                >
+                                                    Choose Different Image
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Upload className="w-16 h-16 text-primary-400 mb-4" />
+                                            <h3 className="text-xl font-black mb-2">Upload Drug Image</h3>
+                                            <p className="text-white/60 text-sm mb-6">Drag &amp; drop or tap to choose a clear photo of the drug packaging.</p>
+                                            <input
+                                                type="file"
+                                                id="file-upload"
+                                                hidden
+                                                accept="image/jpeg,image/png,image/webp,image/heic,image/*"
+                                                onChange={handleFileInputChange}
+                                            />
+                                            <label
+                                                htmlFor="file-upload"
+                                                onDragOver={e => { e.preventDefault(); }}
+                                                onDrop={handleDrop}
+                                                className="btn-primary cursor-pointer py-4 px-8"
+                                            >
+                                                Choose / Drop Image
+                                            </label>
+                                        </>
+                                    )}
                                 </div>
                             )}
 
@@ -349,7 +485,7 @@ export default function ScanPage() {
                             )}
                         </div>
                     )}
-                </>
+                </div>
             )}
 
             {/* Results or Errors */}

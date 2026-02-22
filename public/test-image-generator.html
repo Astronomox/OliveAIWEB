@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Test Drug Image</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        canvas { border: 1px solid #ccc; margin: 20px 0; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h2>🧪 Generate Test Drug Package Image</h2>
+    <p>This creates a mock drug package image for testing the upload functionality.</p>
+    
+    <canvas id="drugCanvas" width="400" height="300"></canvas>
+    <br>
+    <button onclick="generateDrugImage()">Generate Paracetamol Package</button>
+    <button onclick="downloadImage()">Download Test Image</button>
+    
+    <script>
+        function generateDrugImage() {
+            const canvas = document.getElementById('drugCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 400, 300);
+            
+            // Border
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(10, 10, 380, 280);
+            
+            // Drug name
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 28px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('PARACETAMOL', 200, 50);
+            
+            // Manufacturer
+            ctx.font = '16px Arial';
+            ctx.fillText('EMDEX PHARMACEUTICALS', 200, 80);
+            
+            // Strength
+            ctx.font = 'bold 20px Arial';
+            ctx.fillText('500mg Tablets', 200, 110);
+            
+            // NAFDAC Number
+            ctx.font = '14px Arial';
+            ctx.fillText('NAFDAC REG NO: A4-0945L', 200, 140);
+            
+            // Batch
+            ctx.fillText('BATCH NO: PCM001', 200, 165);
+            
+            // Expiry
+            ctx.fillText('EXP: 12/2025', 200, 190);
+            
+            // Additional info
+            ctx.font = '12px Arial';
+            ctx.fillText('Pack of 20 tablets', 200, 220);
+            ctx.fillText('Manufactured in Nigeria', 200, 240);
+            ctx.fillText('For fever and pain relief', 200, 260);
+        }
+        
+        function downloadImage() {
+            const canvas = document.getElementById('drugCanvas');
+            const link = document.createElement('a');
+            link.download = 'test-paracetamol-package.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        // Generate initial image
+        generateDrugImage();
+    </script>
+</body>
+</html>

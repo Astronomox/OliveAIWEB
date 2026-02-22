@@ -8,24 +8,36 @@ export function useCamera() {
 
     const startCamera = useCallback(async () => {
         setError(null);
+        
+        // Don't restart if already active
+        if (stream) return;
+        
         try {
             const mediaStream = await navigator.mediaDevices.getUserMedia({
                 video: {
                     facingMode: "environment", // rear camera on mobile
-                    width: { ideal: 1920 },
-                    height: { ideal: 1080 },
+                    width: { ideal: 1920, max: 1920 },
+                    height: { ideal: 1080, max: 1080 },
+                    frameRate: { ideal: 30, max: 30 }
                 },
                 audio: false,
             });
+            
             setStream(mediaStream);
+            
             if (videoRef.current) {
                 videoRef.current.srcObject = mediaStream;
-                // Must call play() explicitly — some browsers require it
-                try {
-                    await videoRef.current.play();
-                } catch {
-                    // play() may fail on some browsers; video still works via srcObject
-                }
+                videoRef.current.playsInline = true;
+                videoRef.current.muted = true;
+                
+                // Wait for video metadata before playing
+                videoRef.current.onloadedmetadata = async () => {
+                    try {
+                        await videoRef.current?.play();
+                    } catch {
+                        console.log("[Camera] Play failed, but stream is active");
+                    }
+                };
             }
         } catch (err: any) {
             console.error("[Camera] Access error:", err);
@@ -37,7 +49,7 @@ export function useCamera() {
                 setError("Could not access camera. Please try again or use the Upload tab.");
             }
         }
-    }, []);
+    }, [stream]);
 
     const stopCamera = useCallback(() => {
         if (stream) {
