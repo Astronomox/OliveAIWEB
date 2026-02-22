@@ -4,7 +4,7 @@ import os
 import sys
 
 # Set working directory to project root
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+project_root = '/vercel/share/v0-project'
 os.chdir(project_root)
 
 print(f"[v0] Project root: {project_root}")
