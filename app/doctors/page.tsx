@@ -187,6 +187,8 @@ export default function DoctorsPage() {
     setTimeout(() => {
       addToast('Consultation request would be sent successfully! 🩺', 'success');
     }, 1000);
+  };
+
   // Apply filters when they change
   useEffect(() => {
     handleFilter();
