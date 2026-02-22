@@ -1,7 +1,34 @@
+# Dependencies
 node_modules/
+
+# Next.js build output
 .next/
+out/
+
+# Environment variables (NEVER commit these!)
 .env
 .env.local
+.env.development
+.env.production
 .env*.local
-out/
+
+# System files
 .DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
