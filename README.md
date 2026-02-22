@@ -24,6 +24,19 @@ The application is built using a modern React stack:
 *   **Typography:** Inter (Body) & Plus Jakarta Sans (Headings)
 *   **State Management:** React Hooks
 *   **PWA:** Service Workers for offline capabilities
+*   **Backend:** Render hosted API (https://olive-backend-bly2.onrender.com)
+
+### API Integration
+
+Complete backend API integration with 8 modules covering 49 endpoints:
+- **Users**: Authentication, registration, email/phone verification
+- **Prescriptions**: Create, upload, retrieve prescriptions with image processing
+- **Medications**: Track medications with intake logging
+- **Reminders**: Schedule and manage medication reminders
+- **Drugs**: Search drug database with side effects and interactions
+- **Doctors**: Find and consult healthcare professionals
+- **Voice**: Audio transcription and speech synthesis
+- **Health**: System health monitoring
 
 ### Directory Structure
 
@@ -80,6 +93,39 @@ The application will be available at `http://localhost:3000`.
 *   **Styling:** Utilize Tailwind CSS utility classes. Follow the design tokens defined in `tailwind.config.ts` and `app/globals.css`.
 *   **State:** Prefer local component state or custom hooks over global state management unless absolutely necessary.
 *   **API Calls:** Use the centralized API client located in `lib/api.ts` for all backend communication to ensure consistent error handling and authentication.
+
+## Testing
+
+Verify all API endpoints are working:
+```bash
+node scripts/verify-api-endpoints.js
+```
+
+Run the test suite:
+```bash
+npm test
+```
+
+## Deployment
+
+### Vercel Deployment
+
+```bash
+npm run build
+vercel deploy --prod
+```
+
+### Environment Configuration
+
+Copy `.env.example` to `.env.local` and configure:
+- `NEXT_PUBLIC_BACKEND_URL`: Backend API base URL
+- `NEXT_PUBLIC_ENABLE_VOICE`: Enable voice features
+- `NEXT_PUBLIC_ENABLE_OFFLINE_MODE`: Enable offline support
+- `NEXT_PUBLIC_ENABLE_EMERGENCY_SOS`: Enable emergency features
+
+## API Documentation
+
+See `API_DOCUMENTATION.md` for complete endpoint specifications, request/response examples, and usage patterns.
 
 ## License
 
