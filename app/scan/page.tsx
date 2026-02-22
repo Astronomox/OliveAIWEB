@@ -28,6 +28,7 @@ export default function ScanPage() {
 
     const [mode, setMode] = useState<"camera" | "upload" | "search">("camera");
     const [isProcessing, setIsProcessing] = useState(false);
+    const [backendStatus, setBackendStatus] = useState<'online' | 'offline' | 'checking'>('checking');
     const [result, setResult] = useState<DrugMatch | null>(null);
     const [ocrData, setOcrData] = useState<OCRResult | null>(null);
     const [scanHistory, setScanHistory] = useState<any[]>([]);
@@ -41,12 +42,50 @@ export default function ScanPage() {
         } else {
             stopCamera();
         }
-        return () => stopCamera();
+        // Cleanup camera when component unmounts or page changes
+        return () => {
+            stopCamera();
+        };
     }, [mode, startCamera, stopCamera]);
+
+    // Add cleanup when leaving the page
+    useEffect(() => {
+        const handleRouteChange = () => {
+            stopCamera();
+        };
+        
+        window.addEventListener('beforeunload', handleRouteChange);
+        return () => {
+            stopCamera();
+            window.removeEventListener('beforeunload', handleRouteChange);
+        };
+    }, [stopCamera]);
 
     useEffect(() => {
         getPregnancyChecks().then(setScanHistory);
     }, [result]);
+
+    // Check backend status
+    useEffect(() => {
+        async function checkBackendStatus() {
+            try {
+                const response = await fetch('/api/health');
+                if (response.ok) {
+                    const data = await response.json();
+                    setBackendStatus(data.services?.backend?.status === 'online' ? 'online' : 'offline');
+                } else {
+                    setBackendStatus('offline');
+                }
+            } catch {
+                setBackendStatus('offline');
+            }
+        }
+        
+        checkBackendStatus();
+        // Check every 30 seconds
+        const interval = setInterval(checkBackendStatus, 30000);
+        return () => clearInterval(interval);
+    }, []);
 
     const handleCapture = async () => {
         const frame = captureFrame();
@@ -123,14 +162,16 @@ export default function ScanPage() {
             const msg = err?.message || "";
             if (msg.includes("No text")) {
                 setError("Could not read drug packaging — please use better lighting.");
-            } else if (msg.includes("Vision API")) {
-                setError("OCR service unavailable. Try again in a moment.");
+            } else if (msg.includes("Vision API") || msg.includes("OCR API error")) {
+                setError("OCR service temporarily unavailable. Please try again in a moment.");
+            } else if (msg.includes("Failed to proxy") || msg.includes("502") || msg.includes("ENOTFOUND")) {
+                setError("Connection to our servers is currently unavailable. The app is running in offline mode with limited drug database.");
             } else {
                 setError(err?.message || "Scanning failed. Please check your connection and try again.");
             }
         } finally {
             setIsProcessing(false);
-            if (mode === "camera") stopCamera();
+            // Don't stop camera here - let user take multiple shots
         }
     };
 
@@ -144,6 +185,26 @@ export default function ScanPage() {
 
     return (
         <div className="space-y-6 animate-fade-in max-w-2xl mx-auto">
+
+            {/* Backend Status Indicator */}
+            <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-2xl p-4 border border-border">
+                <div className="flex items-center gap-3">
+                    <div className={cn(
+                        "w-3 h-3 rounded-full transition-colors",
+                        backendStatus === 'online' ? "bg-green-500 animate-pulse" :
+                        backendStatus === 'offline' ? "bg-red-500" :
+                        "bg-yellow-500 animate-pulse"
+                    )} />
+                    <span className="text-sm font-medium">
+                        {backendStatus === 'online' ? 'Connected to Olive servers' :
+                         backendStatus === 'offline' ? 'Offline mode - local database only' :
+                         'Checking connection...'}
+                    </span>
+                </div>
+                {backendStatus === 'offline' && (
+                    <span className="text-xs text-muted-foreground">Limited features</span>
+                )}
+            </div>
 
             {/* Navigation Toggles */}
             <div className="flex bg-white dark:bg-gray-900 p-1 rounded-2xl shadow-sm border border-border">
@@ -214,15 +275,27 @@ export default function ScanPage() {
                                             <p className="font-bold">{cameraError}</p>
                                             <button onClick={startCamera} className="mt-4 btn-primary">Try Again</button>
                                         </div>
-                                    ) : (
+                                    ) : stream ? (
                                         <>
                                             <video
                                                 ref={videoRef}
                                                 autoPlay
                                                 playsInline
+                                                muted
                                                 className="w-full h-full object-cover"
                                             />
-                                            <ScanOverlay isScanning={!!stream} />
+                                            <ScanOverlay isScanning={isProcessing} />
+
+                                            {/* Camera Controls */}
+                                            <div className="absolute top-4 right-4 flex flex-col gap-2 z-20">
+                                                <button
+                                                    onClick={stopCamera}
+                                                    className="w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-sm"
+                                                    title="Stop Camera"
+                                                >
+                                                    <X className="w-5 h-5" />
+                                                </button>
+                                            </div>
 
                                             {/* Capture Button */}
                                             <div className="absolute bottom-10 left-0 right-0 flex justify-center z-20">
@@ -235,6 +308,13 @@ export default function ScanPage() {
                                                 </button>
                                             </div>
                                         </>
+                                    ) : (
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 text-white">
+                                            <Camera className="w-16 h-16 text-primary-400 mb-4" />
+                                            <h3 className="text-xl font-black mb-2">Camera Ready</h3>
+                                            <p className="text-white/60 text-sm mb-6">Start camera to scan drug packaging.</p>
+                                            <button onClick={startCamera} className="btn-primary">Start Camera</button>
+                                        </div>
                                     )}
                                 </>
                             ) : (
@@ -298,13 +378,13 @@ export default function ScanPage() {
                                 scanResult={result as any}
                                 showPregnancySafety={!!profile?.trimester}
                                 trimester={profile?.trimester || "first"}
-                                onAskMama={() => router.push("/mama")}
+                                onAskOlive={() => router.push("/olive")}
                             />
 
                             <div className="p-6 bg-cream rounded-[2.5rem] border border-border">
                                 <h4 className="font-bold flex items-center gap-2 mb-3">
                                     <CheckCircle className="w-4 h-4 text-secondary-500" />
-                                    Details spotted by Mama
+                                    Details spotted by Olive
                                 </h4>
                                 <div className="grid grid-cols-2 gap-4">
                                     <DetailItem label="NAFDAC No" value={ocrData?.nafdacNumber || "Spotted"} />
@@ -329,7 +409,7 @@ export default function ScanPage() {
                                                     reminder_times: ["08:00"]
                                                 });
                                                 if (res.data) {
-                                                    alert("Saved to your medications! Mama will remind you.");
+                                                    alert("Saved to your medications! Olive will remind you.");
                                                     router.push("/dashboard");
                                                 } else {
                                                     alert(res.error?.message || "Failed to save. Try again later.");

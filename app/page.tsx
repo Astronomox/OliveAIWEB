@@ -75,10 +75,10 @@ export default function LandingPage() {
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="flex items-center gap-3"
+                    className="flex items-center gap-4"
                 >
-                    <img src="/assets/logo.png" alt="Olive AI Logo" className="w-10 h-10 object-contain" />
-                    <span className="text-xl font-bold text-primary-950 font-heading">Olive AI</span>
+                    <img src="/assets/logo.png" alt="Olive AI Logo" className="w-16 h-16 object-contain" />
+                    <span className="text-2xl font-bold text-primary-950 font-heading">Olive AI</span>
                 </motion.div>
 
                 <motion.div
@@ -113,7 +113,7 @@ export default function LandingPage() {
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 text-primary-700 text-xs font-semibold mb-6 border border-primary-200"
                         >
                             <Sparkles className="w-3.5 h-3.5" />
-                            Built for Olive Mamas
+                            Built for Olive Users
                         </motion.div>
 
                         <motion.h1
@@ -132,7 +132,7 @@ export default function LandingPage() {
                             transition={{ delay: 0.2 }}
                             className="text-base md:text-lg text-primary-900/70 font-normal leading-relaxed mb-8 font-body"
                         >
-                            Olive AI is your AI-powered companion that ensures every medicine you take is safe for your baby. From instant drug scanning to calming AI wellness advice—we're with you every step of the journey.
+                            Olive AI is an AI-powered drug verification platform designed to help users detect fake or unsafe medications instantly. Using intelligent scanning and analysis, Olive AI ensures the drugs you take are authentic, safe, and reliable  with added pregnancy safety insights and AI wellness support when needed.
                         </motion.p>
 
                         <motion.div
@@ -225,8 +225,8 @@ export default function LandingPage() {
                         />
                         <FeatureCard
                             icon={MessageCircle}
-                            title="Talk to Mama AI"
-                            desc="Speak in English or Pidgin. Mama understands your worries and gives you soothing, medically-backed health advice daily."
+                            title="Talk to Olive AI"
+                            desc="Speak in English or Pidgin. Olive understands your worries and gives you soothing, medically-backed health advice daily."
                             color="bg-secondary-500"
                         />
                     </div>
@@ -302,7 +302,7 @@ export default function LandingPage() {
                             <div className="grid grid-cols-2 gap-8 pt-4">
                                 <div>
                                     <p className="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2 font-heading">5,000+</p>
-                                    <p className="text-sm font-semibold uppercase tracking-wider text-primary-900/50 dark:text-primary-100/50">Active Mamas</p>
+                                    <p className="text-sm font-semibold uppercase tracking-wider text-primary-900/50 dark:text-primary-100/50">Active Users</p>
                                 </div>
                                 <div>
                                     <p className="text-4xl font-bold text-secondary-500 mb-2 font-heading">50.2k</p>
@@ -333,7 +333,7 @@ export default function LandingPage() {
                                         {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-5 h-5 fill-secondary-400 text-secondary-400" />)}
                                     </div>
                                     <p className="text-xl md:text-2xl font-medium leading-relaxed mb-8 font-body">
-                                        "Olive AI saved me from taking a fake cough syrup that wasn't even meant for pregnant women. This app is a life saver for every mama!"
+                                        "Olive AI saved me from taking a fake cough syrup that wasn't even meant for pregnant women. This app is a life saver for every woman!"
                                     </p>
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 bg-white/20 rounded-full border border-white/20 flex items-center justify-center font-bold text-lg">N</div>
@@ -354,13 +354,13 @@ export default function LandingPage() {
                 <div className="max-w-4xl mx-auto text-center relative z-10">
                     <Heart className="w-12 h-12 text-primary-500 mb-6 mx-auto animate-pulse" />
                     <h2 className="text-2xl md:text-3xl font-bold text-primary-950 mb-4 leading-tight">
-                        "Mama, Olive AI is hearing your baby's heartbeat alongside you."
+                        "Dear user, Olive AI is hearing your baby's heartbeat alongside you."
                     </h2>
                     <p className="text-base text-primary-900/60 font-normal max-w-2xl mx-auto mb-6">
                         Olive AI was built with love to reduce the stress of pregnancy. No more guessing, no more fake drugs. Just safe motherhood.
                     </p>
                     <Link href="/auth?mode=signup" className="inline-flex items-center gap-2 text-primary-700 font-semibold text-sm border-b-2 border-primary-500 pb-1 hover:text-primary-950 transition-colors">
-                        Join 5,000+ Protected Mamas <ArrowRight className="w-4 h-4" />
+                        Join 5,000+ Protected Women <ArrowRight className="w-4 h-4" />
                     </Link>
                 </div>
 
@@ -369,72 +369,7 @@ export default function LandingPage() {
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary-100/30 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl" />
             </section>
 
-            {/* Footer */}
-            <footer className="bg-primary-950 text-white py-16 px-6">
-                <div className="max-w-6xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-                        {/* Company Info */}
-                        <div className="lg:col-span-2">
-                            <div className="flex items-center gap-3 mb-4">
-                                <img src="/assets/flogo2.png" alt="Olive AI Logo" className="w-10 h-10 object-contain" />
-                                <span className="text-xl font-bold text-white">Olive AI</span>
-                            </div>
-                            <p className="text-white/70 mb-6 leading-relaxed max-w-md">
-                                Empowering Nigerian mothers with AI-driven healthcare insights. Ensuring safe pregnancies through technology and compassion.
-                            </p>
-                            <div className="flex gap-4">
-                                <a href="#" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-600 transition-colors">
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
-                                </a>
-                                <a href="#" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-600 transition-colors">
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/></svg>
-                                </a>
-                                <a href="#" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-600 transition-colors">
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.097.118.112.223.083.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.754-1.378l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.624 0 11.99-5.367 11.99-11.99C24.007 5.367 18.641.001 12.017.001z"/></svg>
-                                </a>
-                                <a href="#" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-600 transition-colors">
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-                                </a>
-                            </div>
-                        </div>
-
-                        {/* Quick Links */}
-                        <div>
-                            <h4 className="text-white font-bold mb-4">Quick Links</h4>
-                            <ul className="space-y-2">
-                                <li><a href="#about" className="text-white/70 hover:text-white transition-colors">About</a></li>
-                                <li><a href="#features" className="text-white/70 hover:text-white transition-colors">Features</a></li>
-                                <li><a href="#how-it-works" className="text-white/70 hover:text-white transition-colors">How it Works</a></li>
-                                <li><Link href="/auth?mode=signup" className="text-white/70 hover:text-white transition-colors">Get Started</Link></li>
-                            </ul>
-                        </div>
-
-                        {/* Support */}
-                        <div>
-                            <h4 className="text-white font-bold mb-4">Support</h4>
-                            <ul className="space-y-2">
-                                <li><a href="#" className="text-white/70 hover:text-white transition-colors">Help Center</a></li>
-                                <li><a href="#" className="text-white/70 hover:text-white transition-colors">Contact Us</a></li>
-                                <li><a href="#" className="text-white/70 hover:text-white transition-colors">Privacy Policy</a></li>
-                                <li><a href="#" className="text-white/70 hover:text-white transition-colors">Terms of Service</a></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    {/* Bottom Bar */}
-                    <div className="border-t border-white/20 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-                        <p className="text-white/60 text-sm">© 2026 Olive AI. Crafted with ❤️ for all Nigerian Mothers</p>
-                        <div className="flex items-center gap-6 text-sm">
-                            <a href="#" className="text-white/60 hover:text-white transition-colors">Safety Disclaimer</a>
-                            <a href="#" className="text-white/60 hover:text-white transition-colors">Medical Advisory</a>
-                            <div className="flex items-center gap-2 text-white/40">
-                                <ShieldCheck className="w-4 h-4" />
-                                <span className="text-xs">NAFDAC Verified</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            
 
         </div>
     );

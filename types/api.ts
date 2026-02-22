@@ -202,6 +202,51 @@ export interface DrugVerificationResponse {
 }
 
 /* ═══════════════════════════════════════════════
+   Doctor Types
+   ═══════════════════════════════════════════════ */
+
+export interface DoctorResponse {
+    id: string;
+    name: string;
+    specialization: string;
+    license_number: string;
+    phone_number?: string | null;
+    email?: string | null;
+    hospital?: string | null;
+    location?: string | null;
+    years_of_experience?: number | null;
+    consultation_fee?: number | null;
+    availability_status: "available" | "busy" | "offline";
+    rating?: number | null;
+    profile_image?: string | null;
+    bio?: string | null;
+    languages?: string[] | null;
+    created_at: string;
+}
+
+export interface DoctorSearchResponse {
+    results: DoctorResponse[];
+    total: number;
+}
+
+export interface ConsultationRequest {
+    doctor_id: string;
+    message: string;
+    urgency_level?: "low" | "medium" | "high" | null;
+}
+
+export interface ConsultationResponse {
+    id: string;
+    user_id: string;
+    doctor_id: string;
+    message: string;
+    urgency_level: string;
+    status: "pending" | "accepted" | "declined" | "completed";
+    created_at: string;
+    doctor?: DoctorResponse | null;
+}
+
+/* ═══════════════════════════════════════════════
    Common Response Types
    ═══════════════════════════════════════════════ */
 
@@ -209,4 +254,39 @@ export interface SuccessResponse {
     success: boolean;
     message?: string | null;
     data?: Record<string, unknown> | null;
+}
+
+/* ═══════════════════════════════════════════════
+   Doctor Types
+   ═══════════════════════════════════════════════ */
+
+export interface DoctorResponse {
+    id: string;
+    name: string;
+    email?: string | null;
+    phone_number?: string | null;
+    specialization: string;
+    location?: string | null;
+    availability_status: 'available' | 'busy' | 'offline';
+    consultation_fee?: number | null;
+    rating?: number | null;
+    experience_years?: number | null;
+    years_of_experience?: number | null; // Alternative field name
+    bio?: string | null;
+    education?: string | null;
+    hospital_affiliation?: string | null;
+    hospital?: string | null; // Alternative field name
+    consultation_hours?: string | null;
+    profile_image?: string | null;
+    license_number: string;
+    languages?: string[] | null;
+    created_at: string;
+    updated_at?: string | null;
+}
+
+export interface DoctorSearchResponse {
+    results: DoctorResponse[];
+    total: number;
+    page?: number | null;
+    limit?: number | null;
 }

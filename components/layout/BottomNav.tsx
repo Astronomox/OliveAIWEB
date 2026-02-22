@@ -4,7 +4,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Scan, Pill, Bell, User as UserIcon } from "lucide-react";
+import { Home, Scan, Pill, Bell, User as UserIcon, Stethoscope } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 export const BottomNav: React.FC = () => {
@@ -16,7 +16,7 @@ export const BottomNav: React.FC = () => {
         { href: "/dashboard", label: "Home", icon: Home },
         { href: "/scan", label: "Scan", icon: Scan },
         { href: "/medications", label: "Meds", icon: Pill },
-        { href: "/reminders", label: "Alerts", icon: Bell },
+        { href: "/doctors", label: "Doctors", icon: Stethoscope },
         { href: "/profile", label: "Profile", icon: UserIcon },
     ];
 

@@ -62,8 +62,8 @@ export const VoiceButton: React.FC<VoiceButtonProps> = ({
                 )}
                 aria-label={
                     state === "listening" ? "Stop listening" :
-                        state === "speaking" ? "Stop Mama speaking" :
-                            "Talk to Mama"
+                        state === "speaking" ? "Stop Olive speaking" :
+                            "Talk to Olive"
                 }
                 aria-busy={state === "processing"}
             >
@@ -78,8 +78,8 @@ export const VoiceButton: React.FC<VoiceButtonProps> = ({
             <span className="sr-only">
                 {state === "idle" ? "Activate voice recognition" :
                     state === "listening" ? "Currently recording your voice" :
-                        state === "processing" ? "Mama is thinking" :
-                            "Mama is speaking"}
+                        state === "processing" ? "Olive is thinking" :
+                            "Olive is speaking"}
             </span>
         </div>
     );

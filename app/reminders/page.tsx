@@ -324,7 +324,7 @@ export default function RemindersPage() {
             <section className="card p-4 bg-secondary-50 border border-secondary-100 flex items-center gap-3">
                 <AlertCircle className="w-5 h-5 text-secondary-600 shrink-0" />
                 <p className="text-xs font-medium text-secondary-800">
-                    <strong>Tip:</strong> Enable WhatsApp reminders in your <Link href="/profile" className="font-black text-secondary-700 underline">Profile Settings</Link> so Mama can remind you even when the app is closed.
+                    <strong>Tip:</strong> Enable WhatsApp reminders in your <Link href="/profile" className="font-black text-secondary-700 underline">Profile Settings</Link> so Olive can remind you even when the app is closed.
                 </p>
             </section>
         </div>

@@ -135,7 +135,7 @@ export default function PregnancyPage() {
                 {isLoading && !selectedResult && (
                     <div className="flex flex-col items-center justify-center py-12 gap-4">
                         <Spinner size={48} />
-                        <p className="text-sm font-bold text-muted-foreground animate-pulse">Mama is checking safety records...</p>
+                        <p className="text-sm font-bold text-muted-foreground animate-pulse">Olive is checking safety records...</p>
                     </div>
                 )}
             </section>
@@ -164,7 +164,7 @@ export default function PregnancyPage() {
                         <div className="card p-6 bg-white dark:bg-gray-900 border-l-4 border-l-primary-500 shadow-glow">
                             <h4 className="font-black text-primary-900 dark:text-primary-100 flex items-center gap-2 mb-3">
                                 <Info className="w-5 h-5 text-primary-500" />
-                                Mama's Guidance
+                                Olive's Guidance
                             </h4>
 
                             <div className="space-y-4">
@@ -181,7 +181,7 @@ export default function PregnancyPage() {
 
                             <div className="mt-6 flex flex-wrap gap-2 pt-4 border-t border-gray-50">
                                 <button className="btn-primary py-3 px-6 h-auto text-sm flex-1">
-                                    <MessageCircle className="w-5 h-5" /> Ask Mama AI
+                                    <MessageCircle className="w-5 h-5" /> Ask Olive AI
                                 </button>
                             </div>
                         </div>

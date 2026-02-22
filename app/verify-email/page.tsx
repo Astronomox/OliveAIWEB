@@ -157,7 +157,7 @@ export default function VerifyEmailPage() {
                     </h1>
                     <p className="text-muted-foreground font-medium text-center mt-2 px-4 text-sm">
                         {success
-                            ? "Welcome to Safely-Mama! Redirecting to dashboard..."
+                            ? "Welcome to Olive AI! Redirecting to dashboard..."
                             : userEmail
                                 ? <>We sent a 6-digit code to <strong>{maskEmail(userEmail)}</strong>. Enter it below.</>
                                 : "We sent a 6-digit code to your email. Enter it below."}

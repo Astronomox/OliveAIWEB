@@ -7,7 +7,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
     Pill, Bell, CheckCircle, ClipboardList, Scan, MessageCircle,
-    HeartPulse, Leaf, Clock, TrendingUp, Calendar,
+    HeartPulse, Leaf, Clock, TrendingUp, Calendar, Stethoscope,
     ChevronRight, Volume2, Share2, Timer, Wifi, WifiOff,
     Activity, AlertTriangle, Baby, Sparkles, Sun, Moon, CloudSun
 } from "lucide-react";
@@ -167,7 +167,7 @@ export default function DashboardPage() {
                     </div>
                     <h1 className="text-3xl md:text-4xl font-black text-primary-950 tracking-tight flex items-center gap-3 mt-1">
                         <greeting.icon className="w-8 h-8 text-secondary-500" />
-                        {greeting.text}, {user?.name?.split(" ")[0] || "Mama"} 🌿
+                        {greeting.text}, {user?.name?.split(" ")[0] || "User"} 🌿
                     </h1>
                     <p className="text-sm text-muted-foreground font-medium mt-1">Here&apos;s your health dashboard for today</p>
                 </div>
@@ -253,7 +253,7 @@ export default function DashboardPage() {
                     </div>
                     <p className="text-sm font-bold text-muted-foreground mt-3 flex items-center gap-1">
                         {complianceRate >= 70 ? (
-                            <><TrendingUp className="w-4 h-4 text-safe-500" /> You&apos;re doing great, Mama 🌿</>
+                            <><TrendingUp className="w-4 h-4 text-safe-500" /> You're doing great! 🌿</>
                         ) : (
                             <><AlertTriangle className="w-4 h-4 text-secondary-500" /> Let&apos;s improve together 💪</>
                         )}
@@ -263,9 +263,11 @@ export default function DashboardPage() {
                 {/* Quick Action Grid */}
                 <section className="grid grid-cols-2 gap-3">
                     <QuickAction href="/scan" icon={Scan} label="Scan Drug" color="bg-primary-500" emoji="💊" />
+                    <QuickAction href="/doctors" icon={Stethoscope} label="Find Doctors" color="bg-blue-500" emoji="🩺" />
                     <QuickAction href="/pregnancy" icon={HeartPulse} label="Pregnancy Check" color="bg-secondary-500" emoji="🤰" />
-                    <QuickAction href="/mama" icon={MessageCircle} label="Talk to Mama" color="bg-safe-500" emoji="🎙️" />
+                    <QuickAction href="/olive" icon={MessageCircle} label="Talk to Olive" color="bg-safe-500" emoji="🎙️" />
                     <QuickAction href="/prescriptions" icon={ClipboardList} label="Prescriptions" color="bg-purple-500" emoji="📋" />
+                    <QuickAction href="/medications" icon={Pill} label="Medications" color="bg-green-500" emoji="💉" />
                 </section>
             </div>
 
@@ -347,7 +349,7 @@ export default function DashboardPage() {
                         <span className="text-3xl">{todayTip.emoji}</span>
                         <div>
                             <h3 className="text-sm font-black uppercase tracking-widest text-secondary-800 flex items-center gap-2">
-                                <Sparkles className="w-4 h-4" /> Mama&apos;s Daily Tip
+                                <Sparkles className="w-4 h-4" /> Daily Tip
                             </h3>
                             <p className="text-sm font-medium text-secondary-900 leading-relaxed mt-2">{todayTip.tip}</p>
                         </div>
@@ -403,8 +405,8 @@ export default function DashboardPage() {
                     ⚙️ Settings
                 </Link>
                 <span className="text-gray-200">|</span>
-                <Link href="/mama" className="text-xs font-bold text-muted-foreground hover:text-primary-600 transition-colors flex items-center gap-1">
-                    🎙️ Ask Mama
+                <Link href="/olive" className="text-xs font-bold text-muted-foreground hover:text-primary-600 transition-colors flex items-center gap-1">
+                    🎙️ Ask Olive
                 </Link>
             </section>
         </div>

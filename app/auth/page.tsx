@@ -230,7 +230,7 @@ function AuthPageInner() {
                             >
                                 {isLogin ? (
                                     <>
-                                        <h2 className="text-3xl font-bold mb-4">Welcome Back, Mama!</h2>
+                                        <h2 className="text-3xl font-bold mb-4">Welcome Back!</h2>
                                         <p className="text-primary-100 mb-8 text-lg leading-relaxed">
                                             Continue your safe motherhood journey. Your health data and AI companion are waiting for you.
                                         </p>

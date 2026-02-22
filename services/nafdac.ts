@@ -26,7 +26,7 @@ function mapBackendToNAFDAC(d: any): NAFDACDrug {
         nafdac_number_variants: [],
         side_effects: d.description ? [d.description] : [],
         contraindications: [],
-        pidgin_warning: "Mama, this medicine flow correctly from our records.",
+        pidgin_warning: "This medicine flow correctly from our records.",
         safe_alternatives: [],
         controlled_substance: false,
         verified_date: new Date().toISOString(),

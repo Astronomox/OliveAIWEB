@@ -4,4 +4,5 @@ export { prescriptionsApi } from "./prescriptions";
 export { medicationsApi } from "./medications";
 export { remindersApi } from "./reminders";
 export { drugsApi } from "./drugs";
+export { doctorsApi } from "./doctors";
 export { healthApi } from "./health";

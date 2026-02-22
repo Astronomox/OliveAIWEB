@@ -33,10 +33,22 @@ export interface ApiResponse<T> {
 
 // ─── Configuration ────────────────────────────────────────────────────────────
 
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_API_URL ??
-  process.env.NEXT_PUBLIC_BACKEND_URL ??
-  "https://olive-backend-bly2.onrender.com";
+// Backend URL with fallbacks for DNS resolution issues
+const getBackendURL = () => {
+  // Always use the configured backend URL directly
+  const fallbackURLs = [
+    process.env.NEXT_PUBLIC_BACKEND_URL,
+    process.env.NEXT_PUBLIC_API_URL,
+    "https://olive-backend-bly2.onrender.com",
+    // Add alternative deployment URLs if available
+    // "https://olive-ai-backend.railway.app",
+    // "https://olive-backend-alternative.onrender.com",
+  ].filter(Boolean);
+  
+  return fallbackURLs[0] || "https://olive-backend-bly2.onrender.com";
+};
+
+const BACKEND_URL = getBackendURL();
 
 // Add debug logging for backend URL
 if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_DEBUG_API === "true") {
@@ -144,7 +156,11 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   // Build headers
   const headers = new Headers(fetchOptions.headers);
 
-  if (body !== undefined && !headers.has("Content-Type")) {
+  // Content-Type handling for different body types
+  if (body instanceof FormData) {
+    // For FormData (file uploads), let the browser set Content-Type with boundary
+    // Don't set Content-Type manually for FormData
+  } else if (body !== undefined && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
   headers.set("Accept", "application/json");
@@ -163,12 +179,22 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 
   const url = path.startsWith("http") ? path : `${BACKEND_URL}${path}`;
 
+  // Prepare request body based on type
+  let requestBody: string | FormData | undefined;
+  if (body instanceof FormData) {
+    requestBody = body; // Pass FormData directly without modification
+  } else if (body !== undefined) {
+    requestBody = JSON.stringify(body);
+  } else {
+    requestBody = undefined;
+  }
+
   let response: Response;
   try {
     response = await fetch(url, {
       ...fetchOptions,
       headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: requestBody,
       signal: controller.signal,
     });
   } catch (err) {

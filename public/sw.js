@@ -3,7 +3,7 @@ const CACHE_NAME = 'olive-ai-v1';
 const ASSETS_TO_CACHE = [
     '/',
     '/scan',
-    '/mama',
+    '/olive',
     '/pregnancy',
     '/profile',
     '/onboarding',

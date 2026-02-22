@@ -8,12 +8,13 @@ const PROTECTED_ROUTES = [
     "/dashboard",
     "/scan",
     "/pregnancy",
-    "/mama",
+    "/olive",
     "/medications",
     "/reminders",
     "/prescriptions",
     "/profile",
     "/drugs",
+    "/doctors",
 ];
 
 const PUBLIC_ROUTES = [
@@ -60,7 +61,7 @@ export function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    const token = request.cookies.get("smama_token")?.value;
+    const token = request.cookies.get("olive_token")?.value;
     const isProtected = PROTECTED_ROUTES.some((r) => pathname.startsWith(r));
     const isPublicAuth = ["/login", "/signup", "/auth"].some((r) => pathname.startsWith(r));
 
@@ -77,8 +78,8 @@ export function middleware(request: NextRequest) {
             authUrl.searchParams.set("reason", "session_expired");
             // Clear the cookie via response
             const response = NextResponse.redirect(authUrl);
-            response.cookies.delete("smama_token");
-            response.cookies.delete("smama_user_id");
+            response.cookies.delete("olive_token");
+            response.cookies.delete("olive_user_id");
             return response;
         }
     }

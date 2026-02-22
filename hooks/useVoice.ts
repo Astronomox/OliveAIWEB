@@ -17,7 +17,9 @@ export function useVoice(language: Language = "en") {
             recognitionRef.current = createSpeechRecognition({
                 language,
                 onResult: (text, isFinal) => {
-                    setTranscript(text);
+                    if (isFinal) {
+                        setTranscript(text);
+                    }
                 },
                 onStateChange: (newState) => setState(newState),
                 onError: (err) => {
@@ -28,7 +30,7 @@ export function useVoice(language: Language = "en") {
         }
 
         if (recognitionRef.current) {
-            stopSpeaking(); // Stop Mama talking before we start listening
+            stopSpeaking(); // Stop Olive talking before we start listening
             recognitionRef.current.start();
         }
     }, [language]);

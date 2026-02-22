@@ -1,0 +1,47 @@
+# Medi-Sync AI Implementation Walkthrough
+
+I have resolved the major backend errors (502/422) and implemented several requested enhancements.
+
+## 🩺 Doctor Access Feature
+The Doctor Access feature is now live on the backend with mock data for verified specialists.
+- **Endpoints**:
+    - `GET /api/doctors`: List all verified doctors.
+    - `GET /api/doctors/categories`: Maternal Health, Child Health, General Practice.
+    - `GET /api/doctors/{id}`: View detailed profile, including ratings and bio.
+
+## 🚀 Resilience Fixes (502 Bad Gateway)
+The 502 errors occurred because slow external APIs (Emdex, Gemini) were blocking the backend.
+- **Async Refactor**: Switched all external API integrations (Email, WhatsApp, Drug Search) to asynchronous `httpx` calls.
+- **Timeouts**: Added strict 5s-10s timeouts to all external calls with graceful fallbacks.
+- **Background Tasks**: Email OTPs are now sent in the background, making registration nearly instantaneous.
+
+## 🛠️ Frontend Integration: Fixing 422 Errors
+The 422 errors for medication reminders were caused by payload mismatches. Please follow these schemas:
+
+### 1. Create Medication
+`POST /api/medications/{user_id}`
+```json
+{
+  "drug_name": "Paracetamol",
+  "dosage": "500mg",
+  "frequency": "Three times daily",
+  "start_date": "2024-03-15T10:00:00",
+  "reminder_times": ["08:00", "14:00", "20:00"]
+}
+```
+> [!IMPORTANT]
+> `reminder_times` MUST be a **List of strings** in `HH:MM` format.
+
+### 2. Prescription Upload
+Ensure the file is sent as `multipart/form-data` with the key **[file](file:///Users/mac/Downloads/Olive/Dockerfile)**.
+```javascript
+const formData = new FormData();
+formData.append('file', fileObject);
+axios.post(`/api/prescriptions/${userId}/upload`, formData);
+```
+
+## ✅ Verification Results
+- **Authentication**: Async OTP delivery verified via background tasks.
+- **Medications**: Creation and reminder scheduling verified with correct JSON payloads.
+- **Drug Search**: Async search with httpx verified.
+- **Doctors**: API successfully returns mock verified doctors.

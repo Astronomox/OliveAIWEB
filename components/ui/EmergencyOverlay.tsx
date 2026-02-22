@@ -36,7 +36,7 @@ export const EmergencyOverlay: React.FC<EmergencyOverlayProps> = ({
                 {/* Instructions */}
                 <div className="space-y-4 mb-8">
                     <div className="p-5 bg-danger-50 rounded-3xl border-2 border-dashed border-danger-200">
-                        <h2 className="text-lg font-bold text-danger-800 mb-2">Mama says:</h2>
+                        <h2 className="text-lg font-bold text-danger-800 mb-2">Olive says:</h2>
                         <p className="text-xl font-bold leading-tight mb-4 text-danger-900">
                             {emergency.instruction}
                         </p>
@@ -62,7 +62,7 @@ export const EmergencyOverlay: React.FC<EmergencyOverlayProps> = ({
 
                     {caregiverPhone && (
                         <a
-                            href={`https://wa.me/${caregiverPhone}?text=EMERGENCY! I need help immediately. Mama AI detected: ${emergency.condition}`}
+                            href={`https://wa.me/${caregiverPhone}?text=EMERGENCY! I need help immediately. Olive AI detected: ${emergency.condition}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn bg-emerald-600 text-white py-4 rounded-3xl flex items-center justify-center gap-2"

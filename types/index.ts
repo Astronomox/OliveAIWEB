@@ -347,7 +347,7 @@ export interface DrugCardProps {
     scanResult?: DrugScanResult;
     showPregnancySafety?: boolean;
     trimester?: Trimester;
-    onAskMama?: (drugName: string) => void;
+    onAskOlive?: (drugName: string) => void;
     onReadAloud?: () => void;
     className?: string;
 }

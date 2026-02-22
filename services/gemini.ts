@@ -6,7 +6,7 @@ import type { ChatMessage, Language, UserProfile, GeminiResponse } from "@/types
  * Send a message to the Gemini API via our Next.js API route.
  * Streams the response for real-time display.
  */
-export async function sendMessageToMama(options: {
+export async function sendMessageToOlive(options: {
     message: string;
     language: Language;
     conversationHistory: ChatMessage[];
@@ -51,14 +51,14 @@ export async function sendMessageToMama(options: {
         };
     } catch (error) {
         const errorMessage =
-            error instanceof Error ? error.message : "Failed to reach Mama. Please try again.";
+            error instanceof Error ? error.message : "Failed to reach Olive. Please try again.";
         throw new Error(errorMessage);
     }
 }
 
 /**
  * Pre-fill prompt for drug-related queries.
- * Used when user taps "Ask Mama about this drug" from scan/pregnancy screens.
+ * Used when user taps "Ask Olive about this drug" from scan/pregnancy screens.
  */
 export function buildDrugQueryPrompt(drugName: string, context?: string): string {
     if (context) {

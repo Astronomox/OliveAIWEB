@@ -23,10 +23,45 @@ export const prescriptionsApi = {
 
     /** POST /api/prescriptions/{user_id}/upload — multipart image upload + OCR */
     async upload(userId: string, file: File, autoMatch = true): Promise<ApiResponse<OCRApiResponse>> {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("auto_match", String(autoMatch));
-        return api.post<OCRApiResponse>(`/api/prescriptions/${userId}/upload`, formData);
+        try {
+            // Validate file before sending
+            if (!file) {
+                throw new Error("No file provided");
+            }
+            
+            if (!file.type.startsWith('image/')) {
+                throw new Error("Please select a valid image file");
+            }
+
+            // Create FormData with exact backend requirements
+            const formData = new FormData();
+            formData.append("file", file); // Key MUST be 'file' as per backend spec
+            if (autoMatch !== undefined) {
+                formData.append("auto_match", String(autoMatch));
+            }
+
+            // Debug logging
+            if (process.env.NODE_ENV === 'development') {
+                console.log('📤 Prescription Upload:', {
+                    userId,
+                    fileName: file.name,
+                    fileSize: file.size,
+                    fileType: file.type,
+                    autoMatch
+                });
+            }
+
+            return api.post<OCRApiResponse>(`/api/prescriptions/${userId}/upload`, formData);
+        } catch (error) {
+            // Enhanced error logging for debugging 422 errors
+            if (error && typeof error === 'object' && 'status' in error && error.status === 422) {
+                console.error('📋 422 Prescription Upload Error:', {
+                    error,
+                    details: 'details' in error ? error.details : null
+                });
+            }
+            throw error;
+        }
     },
 
     /** GET /api/prescriptions/{prescription_id} — single */

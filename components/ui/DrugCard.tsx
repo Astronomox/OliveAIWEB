@@ -10,7 +10,7 @@ export const DrugCard: React.FC<DrugCardProps> = ({
     scanResult,
     showPregnancySafety = false,
     trimester = "first",
-    onAskMama,
+    onAskOlive,
     onReadAloud,
     className,
 }) => {
@@ -68,7 +68,7 @@ export const DrugCard: React.FC<DrugCardProps> = ({
                         <MessageCircle className="w-4 h-4" />
                     </div>
                     <div className="flex-1">
-                        <p className="text-[10px] font-black uppercase text-primary-600 tracking-widest mb-1">Mama's Advice</p>
+                        <p className="text-[10px] font-black uppercase text-primary-600 tracking-widest mb-1">Olive's Advice</p>
                         <p className="text-sm font-medium text-primary-900 leading-relaxed italic">
                             "{scanResult.recommendation}"
                         </p>
@@ -94,11 +94,11 @@ export const DrugCard: React.FC<DrugCardProps> = ({
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-2 pt-2 border-t border-border mt-auto">
                 <button
-                    onClick={() => onAskMama?.(drug.name)}
+                    onClick={() => onAskOlive?.(drug.name)}
                     className="btn-primary py-2 px-4 h-auto text-xs flex-1"
                 >
                     <MessageCircle className="w-4 h-4" />
-                    Ask Mama
+                    Ask Olive
                 </button>
                 <button
                     onClick={onReadAloud}

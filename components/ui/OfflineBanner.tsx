@@ -30,7 +30,7 @@ export const OfflineBanner: React.FC<OfflineBannerProps> = ({
                 <div className="flex-1 min-w-0">
                     <p className="font-bold text-sm">You're Offline</p>
                     <p className="text-xs text-white/60">
-                        {lastSynced ? `Last sync: ${new Date(lastSynced).toLocaleTimeString()}` : "Don't worry, Mama — scan & safety check still work!"}
+                        {lastSynced ? `Last sync: ${new Date(lastSynced).toLocaleTimeString()}` : "Don't worry — scan & safety check still work!"}
                     </p>
                 </div>
             </div>

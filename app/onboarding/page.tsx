@@ -21,7 +21,7 @@ export default function OnboardingPage() {
     const handleComplete = async () => {
         const profile: UserProfile = {
             id: "main",
-            name: formData.name || "Mama",
+            name: formData.name || "User",
             isPregnant: formData.isPregnant || "no",
             trimester: formData.trimester || null,
             weekNumber: formData.weekNumber || null,
@@ -55,7 +55,7 @@ export default function OnboardingPage() {
                                 <Leaf className="w-10 h-10 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-black text-primary-900 leading-none mb-4">Welcome, Mama 🌿</h1>
+                                <h1 className="text-3xl font-black text-primary-900 leading-none mb-4">Welcome! 🌿</h1>
                                 <p className="text-muted-foreground leading-relaxed">
                                     I'm your personal AI health guardian. I'll help you stay safe with medications and track your maternal wellness.
                                 </p>
@@ -94,7 +94,7 @@ export default function OnboardingPage() {
 
                             <div className="space-y-4">
                                 <label className="block">
-                                    <span className="text-sm font-bold text-muted-foreground">What should Mama call you?</span>
+                                    <span className="text-sm font-bold text-muted-foreground">What should Olive call you?</span>
                                     <input
                                         type="text"
                                         value={formData.name}
@@ -172,7 +172,7 @@ export default function OnboardingPage() {
                             <div className="space-y-4">
                                 {[
                                     { icon: Camera, title: "Camera", desc: "To scan drug packaging." },
-                                    { icon: Mic, title: "Microphone", desc: "To talk to Mama AI." },
+                                    { icon: Mic, title: "Microphone", desc: "To talk to Olive AI." },
                                     { icon: Bell, title: "Notifications", desc: "For medication reminders." },
                                 ].map((item) => (
                                     <div key={item.title} className="flex items-center gap-4 p-4 rounded-3xl border border-gray-100">
@@ -191,7 +191,7 @@ export default function OnboardingPage() {
                             <div className="bg-primary-50 p-4 rounded-3xl border border-primary-100 flex gap-3">
                                 <ShieldCheck className="w-5 h-5 text-primary-600 shrink-0 mt-1" />
                                 <p className="text-[10px] font-medium leading-relaxed italic text-primary-800">
-                                    Mama respects your privacy. Your health data stays encrypted on your device and is never shared with third parties.
+                                    Olive respects your privacy. Your health data stays encrypted on your device and is never shared with third parties.
                                 </p>
                             </div>
 

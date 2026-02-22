@@ -12,7 +12,7 @@ import type {
 } from "@/types";
 
 /** Database schema definition */
-interface SafelyMamaDB extends DBSchema {
+interface OliveAIDB extends DBSchema {
     drugs: {
         key: string;
         value: NAFDACDrug;
@@ -60,13 +60,13 @@ interface SafelyMamaDB extends DBSchema {
 const DB_NAME = "olive-ai-db";
 const DB_VERSION = 1;
 
-let dbInstance: IDBPDatabase<SafelyMamaDB> | null = null;
+let dbInstance: IDBPDatabase<OliveAIDB> | null = null;
 
 /** Initialize and return the IndexedDB instance (singleton) */
-export async function getDB(): Promise<IDBPDatabase<SafelyMamaDB>> {
+export async function getDB(): Promise<IDBPDatabase<OliveAIDB>> {
     if (dbInstance) return dbInstance;
 
-    dbInstance = await openDB<SafelyMamaDB>(DB_NAME, DB_VERSION, {
+    dbInstance = await openDB<OliveAIDB>(DB_NAME, DB_VERSION, {
         upgrade(db) {
             // Drugs store with search indexes
             if (!db.objectStoreNames.contains("drugs")) {

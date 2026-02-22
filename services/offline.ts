@@ -1,6 +1,6 @@
 // services/offline.ts — Offline sync and connectivity management
 import { addToSyncQueue, getSyncQueue, clearSyncQueue } from "@/lib/db";
-import { sendMessageToMama } from "./gemini";
+import { sendMessageToOlive } from "./gemini";
 import type { QueuedAction, SyncStatus } from "@/types";
 
 /**
@@ -41,7 +41,7 @@ export async function processSyncQueue(): Promise<void> {
             if (action.type === "ai_query") {
                 // Example: Retry a failed AI query
                 const payload = action.payload as any;
-                await sendMessageToMama({
+                await sendMessageToOlive({
                     message: payload.message,
                     language: payload.language,
                     conversationHistory: payload.history,

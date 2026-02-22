@@ -64,6 +64,20 @@ export default function PrescriptionsPage() {
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
+        
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            addToast("Please select a valid image file (JPG, PNG, WebP, etc.)", "error");
+            return;
+        }
+        
+        // Validate file size (max 10MB)
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        if (file.size > maxSize) {
+            addToast("File size too large. Please select an image under 10MB.", "error");
+            return;
+        }
+        
         setSelectedFile(file);
         setPreviewUrl(URL.createObjectURL(file));
         setShowUpload(true);
@@ -72,15 +86,33 @@ export default function PrescriptionsPage() {
     const handleUpload = async () => {
         if (!user || !selectedFile) return;
         setIsUploading(true);
-        const res = await prescriptionsApi.upload(user.id, selectedFile, true);
-        if (res.data) {
-            addToast("Prescription uploaded! OCR processing complete ✅", "success");
-            setShowUpload(false);
-            setPreviewUrl(null);
-            setSelectedFile(null);
-            fetchPrescriptions();
-        } else addToast(res.error?.message || "Upload failed", "error");
-        setIsUploading(false);
+        
+        try {
+            const res = await prescriptionsApi.upload(user.id, selectedFile, true);
+            if (res.data) {
+                addToast("Prescription uploaded! OCR processing complete ✅", "success");
+                setShowUpload(false);
+                setPreviewUrl(null);
+                setSelectedFile(null);
+                fetchPrescriptions();
+            } else {
+                // Handle specific 422 errors
+                if (res.error?.message.includes('422') || res.error?.message.includes('Unprocessable')) {
+                    addToast("Invalid file format. Please ensure you're uploading a clear image of your prescription.", "error");
+                } else {
+                    addToast(res.error?.message || "Upload failed", "error");
+                }
+            }
+        } catch (error: any) {
+            console.error('Prescription upload error:', error);
+            if (error.status === 422) {
+                addToast("File validation failed. Please ensure you're uploading a valid prescription image.", "error");
+            } else {
+                addToast("Upload failed. Please check your internet connection and try again.", "error");
+            }
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     const handleDelete = async (id: number) => {
@@ -138,7 +170,7 @@ export default function PrescriptionsPage() {
                     <h1 className="text-3xl font-black text-primary-950 tracking-tight flex items-center gap-3">
                         <ClipboardList className="w-8 h-8 text-primary-500" /> Prescriptions
                     </h1>
-                    <p className="text-sm font-medium text-muted-foreground mt-1">Upload, scan &amp; manage your prescriptions — Mama reads them for you</p>
+                    <p className="text-sm font-medium text-muted-foreground mt-1">Upload, scan &amp; manage your prescriptions — Olive reads them for you</p>
                 </div>
                 <div className="flex gap-2">
                     <button onClick={fetchPrescriptions} className="btn-ghost rounded-xl flex items-center gap-1 text-xs"><RefreshCw className="w-3.5 h-3.5" /> Refresh</button>
@@ -172,7 +204,7 @@ export default function PrescriptionsPage() {
                                 <img src={previewUrl} alt="Prescription preview" className="max-h-64 object-contain" />
                             </div>
                         )}
-                        <p className="text-xs text-muted-foreground mb-4">Mama will analyze your prescription using OCR and extract all drugs, dosages, and frequencies automatically.</p>
+                        <p className="text-xs text-muted-foreground mb-4">Olive will analyze your prescription using OCR and extract all drugs, dosages, and frequencies automatically.</p>
                         <div className="flex gap-3">
                             <button onClick={handleUpload} disabled={isUploading} className="btn-primary rounded-2xl flex items-center gap-2 flex-1">
                                 {isUploading ? <><Spinner size={20} color="white" /> Processing OCR…</> : <><Upload className="w-4 h-4" /> Upload &amp; Analyze</>}
@@ -325,7 +357,7 @@ export default function PrescriptionsPage() {
                 <div className="text-center py-16 bg-white rounded-[2rem] border-2 border-dashed border-gray-200">
                     <ClipboardList className="w-16 h-16 text-gray-200 mx-auto mb-4" />
                     <p className="font-black text-primary-900 text-xl uppercase mb-2">No Prescriptions Yet</p>
-                    <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">Upload a photo of your prescription and Mama will read it for you using AI-powered OCR.</p>
+                    <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">Upload a photo of your prescription and Olive will read it for you using AI-powered OCR.</p>
                     <div className="space-y-2 text-xs text-muted-foreground max-w-xs mx-auto text-left mb-6">
                         <p>📷 Take a photo or upload from gallery</p>
                         <p>🤖 AI extracts drugs, dosages &amp; frequencies</p>

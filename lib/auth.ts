@@ -1,7 +1,7 @@
 /**
  * lib/auth.ts
  * ─────────────────────────────────────────────────────────────────────────────
- * Authentication utilities for Olive AI (Safely-Mama).
+ * Authentication utilities for Olive AI.
  *
  * SECURITY FIX: JWT tokens are now stored in memory (module-level variable) instead
  * of localStorage.  This protects against XSS token theft for sensitive
@@ -60,8 +60,8 @@ function getCookie(name: string): string | null {
 function initializeFromCookies() {
   if (_hasInitialized || typeof window === "undefined") return;
   
-  const token = getCookie("smama_token");
-  const userId = getCookie("smama_user_id");
+  const token = getCookie("olive_token");
+  const userId = getCookie("olive_user_id");
   
   if (token && userId) {
     _memoryToken = { accessToken: token, expiresAt: Date.now() + 3600 * 1000 };
@@ -85,7 +85,7 @@ export function setToken(token: string): void {
   if (typeof document !== "undefined") {
     // Set cookie with 1 hour expiry, secure flags
     const expires = new Date(Date.now() + 3600 * 1000).toUTCString();
-    document.cookie = `smama_token=${token}; expires=${expires}; path=/; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
+    document.cookie = `olive_token=${token}; expires=${expires}; path=/; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
   }
 }
 
@@ -100,7 +100,7 @@ export function setUserId(id: string): void {
   // Also set cookie for middleware
   if (typeof document !== "undefined") {
     const expires = new Date(Date.now() + 3600 * 1000).toUTCString();
-    document.cookie = `smama_user_id=${id}; expires=${expires}; path=/; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
+    document.cookie = `olive_user_id=${id}; expires=${expires}; path=/; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
   }
 }
 
@@ -234,8 +234,8 @@ export function clearAuthData(): void {
 
   // Clear cookies
   if (typeof document !== "undefined") {
-    document.cookie = "smama_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie = "smama_user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "solive_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "solive_user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     
     try {
       sessionStorage.removeItem("olive_user_profile");

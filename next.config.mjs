@@ -13,6 +13,16 @@ const nextConfig = {
         ],
     },
 
+    /* API Proxy to fix CORS during development */
+    async rewrites() {
+        return [
+            {
+                source: '/api/proxy/:path*',
+                destination: 'https://olive-backend-bly2.onrender.com/api/:path*',
+            },
+        ];
+    },
+
     /* Custom headers for PWA and security */
     async headers() {
         return [

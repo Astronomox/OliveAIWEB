@@ -1,4 +1,4 @@
-// app/mama/page.tsx — ALIVE Talk to Mama AI Chat
+// app/olive/page.tsx — ALIVE Talk to Olive AI Chat
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
@@ -14,7 +14,7 @@ import type { MedicationResponse } from "@/types/api";
 
 interface ChatMessage {
     id: string;
-    role: "user" | "mama";
+    role: "user" | "olive";
     text: string;
     timestamp: string;
     isEmergency?: boolean;
@@ -29,7 +29,7 @@ const SUGGESTION_CHIPS = [
     { text: "I feel dizzy and my vision is blurry", emoji: "😵" },
 ];
 
-const MAMA_GREETING = "Hello Mama! 🌿 I'm here to help you with medication safety, pregnancy questions, and health guidance. Ask me anything — I'll respond in your preferred language.\n\nRemember: I'm not a doctor, but I can help guide you with evidence-based information.";
+const OLIVE_GREETING = "Hello! 🌿 I'm Olive AI, here to help you with medication safety, pregnancy questions, and health guidance. Ask me anything — I'll respond in your preferred language.\n\nRemember: I'm not a doctor, but I can help guide you with evidence-based information.";
 
 function generateId() {
     return Math.random().toString(36).slice(2, 10);
@@ -39,7 +39,7 @@ function formatTime(ts: string) {
     return new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
-export default function MamaPage() {
+export default function OlivePage() {
     const router = useRouter();
     const { user, isAuthenticated, isLoading: authLoading } = useAuth();
     const { toasts, addToast, removeToast } = useToast();
@@ -62,9 +62,9 @@ export default function MamaPage() {
         if (user) fetchMedContext();
         // Load chat history
         if (typeof window !== "undefined") {
-            const saved = localStorage.getItem("smama_chat_messages");
+            const saved = localStorage.getItem("olive_chat_messages");
             if (saved) setMessages(JSON.parse(saved));
-            const sessions = localStorage.getItem("smama_chat_sessions");
+            const sessions = localStorage.getItem("olive_chat_sessions");
             if (sessions) setChatSessions(JSON.parse(sessions));
         }
     }, [user, authLoading, isAuthenticated]);
@@ -72,7 +72,12 @@ export default function MamaPage() {
     useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
     useEffect(() => {
-        if (transcript) setInput(prev => prev + " " + transcript);
+        if (transcript && transcript.trim()) {
+            setInput(prev => {
+                const newValue = prev.trim() ? `${prev} ${transcript}` : transcript;
+                return newValue;
+            });
+        }
     }, [transcript]);
 
     const fetchMedContext = async () => {
@@ -91,7 +96,7 @@ export default function MamaPage() {
         // This prevents mobile jank when history gets long.
         if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
         saveTimeoutRef.current = setTimeout(() => {
-            localStorage.setItem("smama_chat_messages", JSON.stringify(msgs));
+            localStorage.setItem("olive_chat_messages", JSON.stringify(msgs));
         }, 1000);
     };
 
@@ -118,16 +123,16 @@ export default function MamaPage() {
                 }),
             });
 
-            if (!response.ok) throw new Error("Mama needs a small break. Please try again.");
+            if (!response.ok) throw new Error("Olive needs a small break. Please try again.");
 
-            // Create placeholder message for Mama's streaming reply
-            const mamaMsg: ChatMessage = { id: generateId(), role: "mama", text: "", timestamp: new Date().toISOString() };
-            const withMama = [...updated, mamaMsg];
-            saveMessages(withMama);
+            // Create placeholder message for Olive's streaming reply
+            const oliveMsg: ChatMessage = { id: generateId(), role: "olive", text: "", timestamp: new Date().toISOString() };
+            const withOlive = [...updated, oliveMsg];
+            saveMessages(withOlive);
 
             if (!response.body) {
                 setIsThinking(false);
-                addToast("Mama is having trouble speaking. Try again.", "error");
+                addToast("Olive is having trouble speaking. Try again.", "error");
                 return;
             }
             const reader = response.body.getReader();
@@ -145,7 +150,7 @@ export default function MamaPage() {
                 // Functional state update for streaming
                 setMessages(prev => {
                     const last = prev[prev.length - 1];
-                    if (last && last.role === "mama") {
+                    if (last && last.role === "olive") {
                         return [...prev.slice(0, -1), { ...last, text: accumulated }];
                     }
                     return prev;
@@ -153,15 +158,15 @@ export default function MamaPage() {
             }
 
             // Persistence
-            const finalMessages = [...updated, { ...mamaMsg, text: accumulated }];
-            localStorage.setItem("smama_chat_messages", JSON.stringify(finalMessages));
+            const finalMessages = [...updated, { ...oliveMsg, text: accumulated }];
+            localStorage.setItem("olive_chat_messages", JSON.stringify(finalMessages));
 
         } catch (err: any) {
             const errorMsg: ChatMessage = {
-                id: generateId(), role: "mama",
+                id: generateId(), role: "olive",
                 text: language === "pid"
-                    ? "Ah sorry o! Mama brain dey small rest. Try again for me. 🌿"
-                    : err.message || "I'm sorry, I couldn't process that right now. Please try again, Mama. 🌿",
+                    ? "Ah sorry o! Olive brain dey small rest. Try again for me. 🌿"
+                    : err.message || "I'm sorry, I couldn't process that right now. Please try again. 🌿",
                 timestamp: new Date().toISOString(),
             };
             saveMessages([...updated, errorMsg]);
@@ -180,7 +185,7 @@ export default function MamaPage() {
             };
             const updatedSessions = [session, ...chatSessions].slice(0, 20);
             setChatSessions(updatedSessions);
-            localStorage.setItem("smama_chat_sessions", JSON.stringify(updatedSessions));
+            localStorage.setItem("olive_chat_sessions", JSON.stringify(updatedSessions));
         }
         saveMessages([]);
     };
@@ -200,7 +205,7 @@ export default function MamaPage() {
                         <Leaf className="w-5 h-5" />
                     </div>
                     <div>
-                        <h1 className="text-lg font-black text-primary-900">Talk to Mama 🌿</h1>
+                        <h1 className="text-lg font-black text-primary-900">Talk to Olive 🌿</h1>
                         <p className="text-[10px] text-muted-foreground font-bold uppercase">AI Health Assistant · {isThinking ? "Thinking…" : "Online"}</p>
                     </div>
                 </div>
@@ -254,7 +259,7 @@ export default function MamaPage() {
                         <div className="w-20 h-20 rounded-full bg-gradient-primary text-white flex items-center justify-center shadow-xl mb-4">
                             <Leaf className="w-10 h-10" />
                         </div>
-                        <p className="text-lg font-black text-primary-900 mb-2">Hello, {user?.name?.split(" ")[0] || "Mama"}! 🌿</p>
+                        <p className="text-lg font-black text-primary-900 mb-2">Hello, {user?.name?.split(" ")[0] || "User"}! 🌿</p>
                         <p className="text-sm text-muted-foreground max-w-md font-medium mb-6">How can I help you today? I can answer questions about medication safety, pregnancy, and maternal health.</p>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-md">
@@ -277,7 +282,7 @@ export default function MamaPage() {
                                         </span>
                                     ))}
                                 </div>
-                                <p className="text-[9px] text-muted-foreground mt-1">Mama knows about these and will factor them into her advice</p>
+                                <p className="text-[9px] text-muted-foreground mt-1">Olive knows about these and will factor them into her advice</p>
                             </div>
                         )}
                     </div>
@@ -287,7 +292,7 @@ export default function MamaPage() {
                         {messages.map(msg => (
                             <motion.div key={msg.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                                 className={cn("flex gap-3", msg.role === "user" ? "justify-end" : "justify-start")}>
-                                {msg.role === "mama" && (
+                                {msg.role === "olive" && (
                                     <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-md",
                                         msg.isEmergency ? "bg-danger-500 text-white" : "bg-gradient-primary text-white")}>
                                         <Leaf className="w-4 h-4" />
@@ -302,7 +307,7 @@ export default function MamaPage() {
                                     <div className={cn("flex items-center gap-2 mt-2 pt-1 border-t",
                                         msg.role === "user" ? "border-white/20" : "border-gray-100")}>
                                         <span className={cn("text-[9px]", msg.role === "user" ? "text-white/60" : "text-muted-foreground")}>{formatTime(msg.timestamp)}</span>
-                                        {msg.role === "mama" && (
+                                        {msg.role === "olive" && (
                                             <button onClick={() => handleReadAloud(msg.text)} className="text-[9px] text-primary-600 hover:underline flex items-center gap-0.5">
                                                 <Volume2 className="w-3 h-3" /> Read
                                             </button>
@@ -338,7 +343,7 @@ export default function MamaPage() {
             {/* ═══════════ DISCLAIMER ═══════════ */}
             {messages.length > 0 && (
                 <div className="px-4 py-2 bg-secondary-50 border-t border-secondary-100 text-center shrink-0">
-                    <p className="text-[9px] font-bold text-secondary-700">⚠️ Mama is not a doctor. Always consult a healthcare professional for medical decisions.</p>
+                    <p className="text-[9px] font-bold text-secondary-700">⚠️ Olive is not a doctor. Always consult a healthcare professional for medical decisions.</p>
                 </div>
             )}
 
@@ -353,7 +358,7 @@ export default function MamaPage() {
                     <div className="flex-1 relative">
                         <textarea ref={inputRef} value={input} onChange={e => setInput(e.target.value)}
                             onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-                            placeholder={language === "pid" ? "Wetin you wan ask Mama?" : "Ask Mama anything..."}
+                            placeholder={language === "pid" ? "Wetin you wan ask Olive?" : "Ask Olive anything..."}
                             rows={1} className="input w-full resize-none py-3 pr-10 text-sm min-h-[48px] max-h-32" />
                         {input.length > 100 && (
                             <span className="absolute bottom-1 right-2 text-[9px] text-muted-foreground">{input.length}</span>

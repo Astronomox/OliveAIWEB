@@ -184,7 +184,7 @@ export default function MedicationsPage() {
                                         placeholder="e.g. Amoxicillin"
                                         inputClassName="h-12"
                                     />
-                                    <p className="text-[10px] text-muted-foreground mt-1">Mama finds the exact medicine for you</p>
+                                    <p className="text-[10px] text-muted-foreground mt-1">Olive finds the exact medicine for you</p>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-black text-primary-900 uppercase mb-1">Dosage</label>
@@ -311,11 +311,11 @@ export default function MedicationsPage() {
                 <div className="text-center py-16 bg-white rounded-[2rem] border-2 border-dashed border-gray-200">
                     <Pill className="w-16 h-16 text-gray-200 mx-auto mb-4" />
                     <p className="font-black text-primary-900 text-xl uppercase mb-2">No Medications Yet</p>
-                    <p className="text-sm text-muted-foreground mb-2 max-w-sm mx-auto">Add your medications to get reminders, track compliance, and keep Mama informed about your health.</p>
+                    <p className="text-sm text-muted-foreground mb-2 max-w-sm mx-auto">Add your medications to get reminders, track compliance, and keep Olive informed about your health.</p>
                     <div className="space-y-2 text-xs text-muted-foreground max-w-xs mx-auto text-left mb-6">
                         <p>✅ Get WhatsApp reminders at the right time</p>
                         <p>✅ Track your compliance over time</p>
-                        <p>✅ Mama AI knows your medications for better advice</p>
+                        <p>✅ Olive AI knows your medications for better advice</p>
                     </div>
                     <button onClick={() => setShowAdd(true)} className="btn-primary rounded-2xl shadow-glow">
                         <Plus className="w-4 h-4 mr-2" /> Add Your First Medication
@@ -327,7 +327,7 @@ export default function MedicationsPage() {
             <section className="card p-4 bg-secondary-50 border border-secondary-100 flex items-center gap-3">
                 <AlertTriangle className="w-5 h-5 text-secondary-600 shrink-0" />
                 <p className="text-xs font-medium text-secondary-800">
-                    <strong>Pro tip:</strong> Add reminder times to each medication so Mama can send you WhatsApp reminders. You can also scan your prescription to auto-add medications.
+                    <strong>Pro tip:</strong> Add reminder times to each medication so Olive can send you WhatsApp reminders. You can also scan your prescription to auto-add medications.
                 </p>
                 <Link href="/prescriptions" className="text-xs font-black text-secondary-700 whitespace-nowrap hover:underline flex items-center gap-1">
                     Scan now <ChevronRight className="w-3 h-3" />

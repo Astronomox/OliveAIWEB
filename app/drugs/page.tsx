@@ -57,7 +57,7 @@ export default function DrugsPage() {
         if (!authLoading && !isAuthenticated) { router.push("/login"); return; }
         // Load recent searches
         if (typeof window !== "undefined") {
-            const saved = localStorage.getItem("smama_recent_drug_searches");
+            const saved = localStorage.getItem("solive_recent_drug_searches");
             if (saved) setRecentSearches(JSON.parse(saved));
         }
     }, [authLoading, isAuthenticated]);
@@ -65,7 +65,7 @@ export default function DrugsPage() {
     const saveRecentSearch = (term: string) => {
         const updated = [term, ...recentSearches.filter(s => s !== term)].slice(0, 5);
         setRecentSearches(updated);
-        localStorage.setItem("smama_recent_drug_searches", JSON.stringify(updated));
+        localStorage.setItem("solive_recent_drug_searches", JSON.stringify(updated));
     };
 
     const handleSearch = useCallback((value: string) => {

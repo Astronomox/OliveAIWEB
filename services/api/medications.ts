@@ -10,7 +10,29 @@ import type {
 export const medicationsApi = {
     /** POST /api/medications/{user_id} */
     create(userId: string, data: MedicationCreate): Promise<ApiResponse<MedicationResponse>> {
-        return api.post<MedicationResponse>(`/api/medications/${userId}`, data);
+        // Validate reminder_times format before sending to backend
+        const validatedData = {
+            ...data,
+            reminder_times: data.reminder_times.map(time => {
+                // Ensure time is in HH:MM format
+                if (typeof time !== 'string' || !/^\d{2}:\d{2}$/.test(time)) {
+                    throw new Error(`Invalid reminder time format: ${time}. Expected HH:MM format.`);
+                }
+                return time;
+            })
+        };
+
+        // Debug logging for development
+        if (process.env.NODE_ENV === 'development') {
+            console.log('📊 Medication Create:', {
+                userId,
+                drugName: data.drug_name,
+                reminderTimes: data.reminder_times,
+                validatedData
+            });
+        }
+
+        return api.post<MedicationResponse>(`/api/medications/${userId}`, validatedData);
     },
 
     /** GET /api/medications/user/{user_id}?status=active */

@@ -13,7 +13,8 @@ export const Navbar: React.FC = () => {
     const hideOn = ["/", "/onboarding", "/login", "/signup", "/auth", "/verify-phone", "/verify-email", "/confirm-email"];
     if (hideOn.includes(pathname)) return null;
 
-    const displayUser = user?.name?.split(' ')[0] || "Mama";
+    // Try to get display name from user data, fallback to User
+    const displayUser = user?.name?.split(' ')[0] || user?.email?.split('@')[0] || "User";
 
     return (
         <nav className="sticky top-0 z-40 h-16 bg-cream/80 backdrop-blur-md border-b border-border px-4 lg:px-8 flex items-center justify-between">

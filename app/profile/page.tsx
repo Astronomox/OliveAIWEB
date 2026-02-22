@@ -100,7 +100,7 @@ export default function ProfilePage() {
                         {user?.name?.charAt(0).toUpperCase() || "M"}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <h1 className="text-2xl font-black tracking-tight">{user?.name || "Mama"}</h1>
+                        <h1 className="text-2xl font-black tracking-tight">{user?.name || "User"}</h1>
                         <p className="text-sm text-white/70 font-bold flex items-center gap-1"><Phone className="w-3 h-3" /> {user?.phone_number}</p>
                         <div className="flex flex-wrap items-center gap-2 mt-2">
                             {user?.email_verified ? (
@@ -172,7 +172,7 @@ export default function ProfilePage() {
                 </h3>
                 <div className="space-y-4">
                     <div>
-                        <label className="block text-xs font-black text-primary-900 uppercase mb-1 flex items-center gap-1"><Globe className="w-3 h-3" /> Language Preference</label>
+                        <label className="text-xs font-black text-primary-900 uppercase mb-1 flex items-center gap-1"><Globe className="w-3 h-3" /> Language Preference</label>
                         <select className="input w-full max-w-xs" value={form.language_preference || "en"}
                             onChange={e => { setForm({ ...form, language_preference: e.target.value }); if (user) usersApi.updateUser(user.id, { language_preference: e.target.value }).then(r => { if (r.data) addToast("Language updated", "success"); }); }}>
                             <option value="en">🇬🇧 English</option>
@@ -181,7 +181,7 @@ export default function ProfilePage() {
                             <option value="ig">🇳🇬 Igbo</option>
                             <option value="ha">🇳🇬 Hausa</option>
                         </select>
-                        <p className="text-[10px] text-muted-foreground mt-1">Mama will speak to you in this language</p>
+                        <p className="text-[10px] text-muted-foreground mt-1">Olive will speak to you in this language</p>
                     </div>
 
                     <ToggleRow icon={Volume2} label="Auto-Read Results" description="Automatically read drug safety results aloud"
@@ -204,7 +204,7 @@ export default function ProfilePage() {
                     <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-primary-50 transition-all text-left group"
                         onClick={() => addToast("History cleared!", "info")}>
                         <div className="w-8 h-8 rounded-lg bg-secondary-100 text-secondary-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"><MessageSquare className="w-4 h-4" /></div>
-                        <div className="flex-1"><p className="text-sm font-bold text-primary-900">Clear Chat History</p><p className="text-[10px] text-muted-foreground">Remove all Mama AI conversations</p></div>
+                        <div className="flex-1"><p className="text-sm font-bold text-primary-900">Clear Chat History</p><p className="text-[10px] text-muted-foreground">Remove all Olive AI conversations</p></div>
                         <ChevronRight className="w-4 h-4 text-muted-foreground" />
                     </button>
                 </div>
@@ -249,7 +249,7 @@ function ProfileField({ label, icon: Icon, value, editable, onChange, helper, ty
 }) {
     return (
         <div>
-            <label className="block text-xs font-black text-primary-900 uppercase mb-1 flex items-center gap-1"><Icon className="w-3 h-3" /> {label}</label>
+            <label className="text-xs font-black text-primary-900 uppercase mb-1 flex items-center gap-1"><Icon className="w-3 h-3" /> {label}</label>
             {editable ? (
                 options ? (
                     <select className="input w-full" value={value} onChange={e => onChange(e.target.value)}>

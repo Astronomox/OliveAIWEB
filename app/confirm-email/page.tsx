@@ -102,7 +102,7 @@ function ConfirmEmailInner() {
 
                         <h2 className="text-2xl font-black text-primary-950">Email Verified! 🎉</h2>
                         <p className="text-muted-foreground font-medium px-4">
-                            Your email is confirmed. Welcome to Safely-Mama 🌿
+                            Your email is confirmed. Welcome to Olive AI 🌿
                         </p>
                         <p className="text-xs text-muted-foreground">Redirecting to login in 3 seconds...</p>
 
@@ -136,7 +136,7 @@ function ConfirmEmailInner() {
                 )}
 
                 <p className="mt-8 text-[10px] text-center text-muted-foreground font-black uppercase tracking-widest">
-                    Safely-Mama • Secure • Neural-Powered
+                    Olive AI • Secure • Neural-Powered
                 </p>
             </motion.div>
         </div>
