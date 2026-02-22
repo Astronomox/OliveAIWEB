@@ -9,7 +9,12 @@ import type {
 } from "@/types/api";
 
 export const remindersApi = {
-    /** POST /api/reminders/{medication_id} — schedule reminders (body: string[]) */
+    /** POST /api/medications/{medication_id}/reminders — create reminder for medication */
+    create(medicationId: number, times: string[]): Promise<ApiResponse<ReminderResponse[]>> {
+        return api.post<ReminderResponse[]>(`/api/medications/${medicationId}/reminders`, times);
+    },
+
+    /** POST /api/reminders/{medication_id} — schedule reminders (legacy endpoint, body: string[]) */
     schedule(medicationId: number, times: string[]): Promise<ApiResponse<ReminderResponse[]>> {
         return api.post<ReminderResponse[]>(`/api/reminders/${medicationId}`, times);
     },

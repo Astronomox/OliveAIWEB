@@ -290,3 +290,33 @@ export interface DoctorSearchResponse {
     page?: number | null;
     limit?: number | null;
 }
+
+/* ═══════════════════════════════════════════════
+   Voice Types
+   ═══════════════════════════════════════════════ */
+
+export interface TranscriptionResponse {
+    text: string;
+    confidence?: number | null;
+    language?: string | null;
+    duration_seconds?: number | null;
+}
+
+export interface TextToSpeechResponse {
+    audio_url: string;
+    audio_data?: string | null; // Base64 encoded audio if requested
+    format: string;
+    duration_seconds?: number | null;
+}
+
+export interface VoiceTranscribeRequest {
+    audio_file: File | Blob; // Audio file to transcribe
+    language?: string | null; // Language code (en, pidgin, etc.)
+}
+
+export interface VoiceSynthesizeRequest {
+    text: string;
+    language?: string | null;
+    speed?: "slow" | "normal" | "fast" | null;
+    gender?: "male" | "female" | null;
+}
