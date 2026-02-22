@@ -36,7 +36,7 @@ export const voiceApi = {
             // Debug logging
             if (process.env.NODE_ENV === "development") {
                 console.log("🎤 Voice Transcribe:", {
-                    fileName: file.name,
+                    fileName: file instanceof File ? file.name : "blob",
                     fileSize: file.size,
                     fileType: file.type,
                     language,
@@ -128,7 +128,7 @@ export const voiceApi = {
 
             if (process.env.NODE_ENV === "development") {
                 console.log("🎙️ Voice Transcribe & Process:", {
-                    fileName: file.name,
+                    fileName: file instanceof File ? file.name : "blob",
                     fileSize: file.size,
                     language,
                 });
