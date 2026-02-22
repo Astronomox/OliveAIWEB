@@ -166,8 +166,11 @@ export default function ScanPage() {
                 setError("OCR service temporarily unavailable. Please try again in a moment.");
             } else if (msg.includes("Failed to proxy") || msg.includes("502") || msg.includes("ENOTFOUND")) {
                 setError("Connection to our servers is currently unavailable. The app is running in offline mode with limited drug database.");
+            } else if (msg.includes("Could not identify")) {
+                setError("Could not identify this medicine. Try searching by name in the Search tab.");
             } else {
-                setError(err?.message || "Scanning failed. Please check your connection and try again.");
+                // Generic error but don't expose internal details
+                setError("Scanning failed. Please try again with a clearer image.");
             }
         } finally {
             setIsProcessing(false);
