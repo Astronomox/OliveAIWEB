@@ -12,6 +12,16 @@ out/
 .env.production
 .env*.local
 
+# Google Cloud Service Account Keys (NEVER commit these!)
+lifecare.json
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!next.config.mjs
+!postcss.config.mjs
+!tailwind.config.ts
+
 # System files
 .DS_Store
 Thumbs.db
