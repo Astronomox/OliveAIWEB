@@ -2,7 +2,7 @@
 import type { NAFDACDrug, DrugMatch } from "@/types";
 import { fuzzyMatchDrug } from "@/lib/bayesian";
 import { getAllDrugs, seedDrugs } from "@/lib/db";
-import { drugsService } from "./backend";
+import { drugsApi } from "./api/drugs";
 
 let drugsCache: NAFDACDrug[] | null = null;
 
@@ -82,9 +82,9 @@ export async function searchNAFDACDrugs(query: string): Promise<NAFDACDrug[]> {
     // 1. Try Backend first if online
     if (typeof navigator !== 'undefined' && navigator.onLine) {
         try {
-            const backendMatches = await drugsService.search(query);
-            if (backendMatches && backendMatches.length > 0) {
-                return backendMatches.map(mapBackendToNAFDAC);
+            const response = await drugsApi.search(query);
+            if (response.data && response.data.results && response.data.results.length > 0) {
+                return response.data.results.map(mapBackendToNAFDAC);
             }
         } catch (err) {
             console.warn("Backend search failed, falling back to local", err);

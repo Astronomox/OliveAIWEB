@@ -45,24 +45,62 @@ export interface AuthState {
 
 let _memoryToken: AuthTokens | null = null;
 let _memoryUser: User | null = null;
+let _hasInitialized = false;
+
+// Helper function to get cookie value
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+  return null;
+}
+
+// Initialize from cookies only once
+function initializeFromCookies() {
+  if (_hasInitialized || typeof window === "undefined") return;
+  
+  const token = getCookie("smama_token");
+  const userId = getCookie("smama_user_id");
+  
+  if (token && userId) {
+    _memoryToken = { accessToken: token, expiresAt: Date.now() + 3600 * 1000 };
+    _memoryUser = { id: userId, email: "", name: "User" };
+  }
+  
+  _hasInitialized = true;
+}
 
 // ─── Legacy Compatibility Aliases (Required by services & hooks) ──────────────
 
-/** Sets the access token in memory */
+/** Sets the access token in memory and cookies */
 export function setToken(token: string): void {
   if (!_memoryToken) {
     _memoryToken = { accessToken: token, expiresAt: Date.now() + 3600 * 1000 };
   } else {
     _memoryToken.accessToken = token;
   }
+  
+  // Also set cookie for middleware (SSR-safe)
+  if (typeof document !== "undefined") {
+    // Set cookie with 1 hour expiry, secure flags
+    const expires = new Date(Date.now() + 3600 * 1000).toUTCString();
+    document.cookie = `smama_token=${token}; expires=${expires}; path=/; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
+  }
 }
 
-/** Sets the user ID in memory (partial user object) */
+/** Sets the user ID in memory and cookies */
 export function setUserId(id: string): void {
   if (!_memoryUser) {
     _memoryUser = { id, email: "", name: "User" };
   } else {
     _memoryUser.id = id;
+  }
+  
+  // Also set cookie for middleware
+  if (typeof document !== "undefined") {
+    const expires = new Date(Date.now() + 3600 * 1000).toUTCString();
+    document.cookie = `smama_user_id=${id}; expires=${expires}; path=/; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
   }
 }
 
@@ -133,6 +171,8 @@ export function setAuthData(user: User, tokens: AuthTokens): void {
  * Returns null if the user is not authenticated or the token has expired.
  */
 export function getToken(): string | null {
+  initializeFromCookies();
+  
   if (!_memoryToken) return null;
 
   // Check token expiry with a 30-second buffer for clock skew
@@ -192,7 +232,11 @@ export function clearAuthData(): void {
   _memoryToken = null;
   _memoryUser = null;
 
-  if (typeof window !== "undefined") {
+  // Clear cookies
+  if (typeof document !== "undefined") {
+    document.cookie = "smama_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "smama_user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    
     try {
       sessionStorage.removeItem("olive_user_profile");
     } catch {

@@ -36,6 +36,7 @@ function AuthPageInner() {
 
     const [isLogin, setIsLogin] = useState(initialMode === "login");
     const [checkingAuth, setCheckingAuth] = useState(true);
+    const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -50,19 +51,29 @@ function AuthPageInner() {
     });
 
     useEffect(() => {
-        if (isAuthenticated()) {
-            router.replace("/dashboard");
-        } else {
-            setCheckingAuth(false);
-        }
+        // Small delay to prevent race conditions and loops
+        const checkAuthDelayed = setTimeout(() => {
+            if (!hasCheckedAuth) {
+                if (isAuthenticated()) {
+                    router.replace("/dashboard");
+                    return;
+                } else {
+                    setCheckingAuth(false);
+                }
+                setHasCheckedAuth(true);
+            }
+        }, 100); // 100ms delay
 
+        // Handle URL search params immediately
         const reason = searchParams.get("reason");
         if (reason === "session_expired") {
             setError("Your session expired — please log in again");
         } else if (reason === "unauthorized") {
             setError("You need to log in to access that page");
         }
-    }, [router, searchParams]);
+
+        return () => clearTimeout(checkAuthDelayed);
+    }, [hasCheckedAuth, router, searchParams]);
 
     const setField = (field: string, value: string) => {
         setForm(prev => ({ ...prev, [field]: value }));
@@ -114,7 +125,10 @@ function AuthPageInner() {
             if (res.error) {
                 setError(res.error.message || "Invalid email or password");
             } else {
-                router.push("/dashboard");
+                // Small delay to ensure cookie is set before navigation
+                setTimeout(() => {
+                    window.location.href = "/dashboard";
+                }, 100);
             }
         } catch (err: any) {
             setError(err.message || "Network error. Please try again.");

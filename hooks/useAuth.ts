@@ -62,7 +62,7 @@ export function useAuth() {
         }
         clearAuth();
         setUser(null);
-        router.push("/login");
+        router.push("/auth?mode=login");
     };
 
     return {

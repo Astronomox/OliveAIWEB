@@ -81,9 +81,17 @@ export default function DashboardPage() {
     const todayTip = useMemo(() => HEALTH_TIPS[new Date().getDay() % HEALTH_TIPS.length], []);
 
     useEffect(() => {
-        if (!authLoading && !isAuthenticated) { router.push("/login"); return; }
+        if (!authLoading && !isAuthenticated) { 
+            // Add a small delay to prevent race conditions with auth initialization
+            setTimeout(() => {
+                if (!isAuthenticated) {
+                    router.push("/auth?mode=login");
+                }
+            }, 200);
+            return; 
+        }
         if (user) fetchAll();
-    }, [user, authLoading, isAuthenticated]);
+    }, [user, authLoading, isAuthenticated, router]);
 
     const fetchAll = async () => {
         if (!user) return;

@@ -18,7 +18,8 @@ const PROTECTED_ROUTES = [
 
 const PUBLIC_ROUTES = [
     "/login",
-    "/signup",
+    "/signup", 
+    "/auth",
     "/verify-phone",
     "/verify-email",
     "/confirm-email",
@@ -61,28 +62,28 @@ export function middleware(request: NextRequest) {
 
     const token = request.cookies.get("smama_token")?.value;
     const isProtected = PROTECTED_ROUTES.some((r) => pathname.startsWith(r));
-    const isPublicAuth = ["/login", "/signup"].some((r) => pathname.startsWith(r));
+    const isPublicAuth = ["/login", "/signup", "/auth"].some((r) => pathname.startsWith(r));
 
-    // ── Protected route without token → redirect to login ──────
+    // ── Protected route without token → redirect to auth ──────
     if (isProtected) {
         if (!token) {
-            const loginUrl = new URL("/login", request.url);
-            return NextResponse.redirect(loginUrl);
+            const authUrl = new URL("/auth?mode=login", request.url);
+            return NextResponse.redirect(authUrl);
         }
 
         // Token expired → redirect with reason
         if (isExpired(token)) {
-            const loginUrl = new URL("/login", request.url);
-            loginUrl.searchParams.set("reason", "session_expired");
+            const authUrl = new URL("/auth?mode=login", request.url);
+            authUrl.searchParams.set("reason", "session_expired");
             // Clear the cookie via response
-            const response = NextResponse.redirect(loginUrl);
+            const response = NextResponse.redirect(authUrl);
             response.cookies.delete("smama_token");
             response.cookies.delete("smama_user_id");
             return response;
         }
     }
 
-    // ── Login/Signup WITH valid token → redirect to dashboard ──
+    // ── Auth pages WITH valid token → redirect to dashboard ──
     if (isPublicAuth && token && !isExpired(token)) {
         return NextResponse.redirect(new URL("/dashboard", request.url));
     }

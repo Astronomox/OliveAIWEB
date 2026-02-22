@@ -8,7 +8,6 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { cn } from "@/lib/utils";
 import { BackendWakeup } from "@/components/layout/BackendWakeup";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { ConsoleFilter } from "@/components/ConsoleFilter";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" });
@@ -44,7 +43,6 @@ export default function RootLayout({
                 suppressHydrationWarning={true}
             >
                 <ErrorBoundary>
-                    <ConsoleFilter />
                     <BackendWakeup />
                     <Navbar />
 
