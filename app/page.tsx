@@ -350,13 +350,13 @@ export default function LandingPage() {
             </section>
 
             {/* Emotional Banner Section */}
-            <section className="bg-cream py-16 px-6 overflow-hidden relative">
+            <section className="bg-cream py-12 px-6 overflow-hidden relative">
                 <div className="max-w-4xl mx-auto text-center relative z-10">
                     <Heart className="w-12 h-12 text-primary-500 mb-6 mx-auto animate-pulse" />
                     <h2 className="text-2xl md:text-3xl font-bold text-primary-950 mb-4 leading-tight">
                         "Mama, Olive AI is hearing your baby's heartbeat alongside you."
                     </h2>
-                    <p className="text-base text-primary-900/60 font-normal max-w-2xl mx-auto mb-8">
+                    <p className="text-base text-primary-900/60 font-normal max-w-2xl mx-auto mb-6">
                         Olive AI was built with love to reduce the stress of pregnancy. No more guessing, no more fake drugs. Just safe motherhood.
                     </p>
                     <Link href="/auth?mode=signup" className="inline-flex items-center gap-2 text-primary-700 font-semibold text-sm border-b-2 border-primary-500 pb-1 hover:text-primary-950 transition-colors">
@@ -376,7 +376,7 @@ export default function LandingPage() {
                         {/* Company Info */}
                         <div className="lg:col-span-2">
                             <div className="flex items-center gap-3 mb-4">
-                                <img src="/assets/logo2.png" alt="Olive AI Logo" className="w-10 h-10 object-contain brightness-0 invert" />
+                                <img src="/assets/flogo2.png" alt="Olive AI Logo" className="w-10 h-10 object-contain" />
                                 <span className="text-xl font-bold text-white">Olive AI</span>
                             </div>
                             <p className="text-white/70 mb-6 leading-relaxed max-w-md">

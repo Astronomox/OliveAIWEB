@@ -7,6 +7,8 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { cn } from "@/lib/utils";
 import { BackendWakeup } from "@/components/layout/BackendWakeup";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { ConsoleFilter } from "@/components/ConsoleFilter";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" });
@@ -37,26 +39,32 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className={cn(inter.variable, jakarta.variable)}>
-            <body className="flex flex-col min-h-screen bg-cream text-charcoal selection:bg-primary-100 selection:text-primary-900 font-body">
-                <BackendWakeup />
-                <Navbar />
+            <body 
+                className="flex flex-col min-h-screen bg-cream text-charcoal selection:bg-primary-100 selection:text-primary-900 font-body"
+                suppressHydrationWarning={true}
+            >
+                <ErrorBoundary>
+                    <ConsoleFilter />
+                    <BackendWakeup />
+                    <Navbar />
 
-                <div className="flex flex-1">
-                    <Sidebar />
+                    <div className="flex flex-1">
+                        <Sidebar />
 
-                    <main className="flex-1 w-full px-4 pt-6 pb-32 lg:pb-12 overflow-x-hidden">
-                        {/* Skip to main content link for keyboard users */}
-                        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:bg-primary-500 focus:text-white focus:p-4 focus:rounded-b-2xl">
-                            Skip to main content
-                        </a>
+                        <main className="flex-1 w-full px-4 pt-6 pb-32 lg:pb-12 overflow-x-hidden">
+                            {/* Skip to main content link for keyboard users */}
+                            <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:bg-primary-500 focus:text-white focus:p-4 focus:rounded-b-2xl">
+                                Skip to main content
+                            </a>
 
-                        <div id="main-content">
-                            {children}
-                        </div>
-                    </main>
-                </div>
+                            <div id="main-content">
+                                {children}
+                            </div>
+                        </main>
+                    </div>
 
-                <BottomNav />
+                    <BottomNav />
+                </ErrorBoundary>
             </body>
         </html>
     );
